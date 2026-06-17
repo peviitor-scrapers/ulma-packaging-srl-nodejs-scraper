@@ -27,13 +27,16 @@ job_seeker_ro_spider
 ## Structură proiect
 
 ```
+├── config/company.json         # Sursa unică de adevăr (CIF, brand, URL-uri, API)
+├── config/company.js           # Loader ESM pentru config/company.json
 ├── index.js                    # Orchestrator principal
-├── company.js                  # Validare companie (ANAF + Peviitor + SOLR)
+├── company.js                  # Validare companie (ANAF + Peviitor + SOLR) cu cache 7 zile
 ├── demoanaf.js                 # CLI wrapper pentru src/anaf.js
 ├── src/anaf.js                 # Modul ANAF API (search + company details)
 ├── src/markdown-generator.js   # Generează docs/jobs.md după scrape
+├── src/job-validator.js        # Primitivă comună: validateByHead, validateByContent
 ├── solr.js                     # Operații SOLR (query, upsert, delete, company)
-├── company.json                # Cache companie (fallback când ANAF e down)
+├── company.json                # Cache ANAF (committed, TTL 7 zile, fallback la stale)
 ├── ROBOTS.md          # Analiză robots.txt și politici de scraping
 ├── tests/
 │   ├── unit/          # 56 teste unitare (API-uri mock-uite)

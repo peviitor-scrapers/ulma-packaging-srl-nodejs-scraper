@@ -5,9 +5,9 @@ EPAM scraper for peviitor.ro (Node.js, ESM, Jest)
 
 ## 📐 This Repo Is a Template
 This repo is the **reference implementation** for all Node.js scrapers in the peviitor.ro ecosystem. Other scrapers are derived from it. When making changes:
-- **Keep patterns generic and portable** — only the API parsing logic in `index.js` should be EPAM-specific
-- **Do not hardcode EPAM beyond what is already hardcoded** — new constants belong at the top of the file with a comment, so derived scrapers can override them in one place
-- **If you add a new file, update [CONTRIBUTING.md](CONTRIBUTING.md)** — the derivation checklist must stay accurate
+- **All company-specific identity lives in `config/company.json`** (CIF, brand, legalName, URLs, API params). Read from `config/company.js` in Node code, or via `jq` in workflows. Never hardcode in source files.
+- **Only the API parsing logic in `index.js`** (`fetchJobsPage`, `parseApiJobs`) is EPAM-specific. The output shape (`mapToJobModel`, `transformJobsForSOLR`) must stay uniform across derived scrapers.
+- **If you add a new file, update [CONTRIBUTING.md](CONTRIBUTING.md)** — the derivation checklist must stay accurate.
 
 ## Critical Rules
 
@@ -57,10 +57,19 @@ npm run test:consistency
 - Toate workflow-urile din `.github/workflows/` trebuie să treacă înainte de merge
 
 ### 7. Module Structure
-- `src/anaf.js` — core ANAF library (imported by company.js); has retry logic: 3 retries, 2s exponential backoff
-- `src/markdown-generator.js` — generates docs/jobs.md after each scrape; called from index.js
+- `config/company.json` + `config/company.js` — single source of truth for company identity
+- `src/anaf.js` — core ANAF library (imported by company.js); retry logic: 3 retries, 2s exponential backoff
+- `src/markdown-generator.js` — generates `docs/jobs.md` after each scrape; called from index.js
+- `src/job-validator.js` — shared `validateByHead` + `validateByContent` used by both validator CLIs
 - `demoanaf.js` — CLI wrapper around src/anaf.js
-- `company.js` — company validation (ANAF + Peviitor + SOLR)
+- `company.js` — company validation (ANAF + Peviitor + SOLR); root `company.json` is a 7-day ANAF cache committed to repo, with stale fallback
 - `solr.js` — SOLR operations
-- `validate-jobs.js` — standalone job URL validator; checks active/expired, optionally deletes stale jobs
+- `validate-jobs.js` — manual deep validator (content-aware); thin wrapper over src/job-validator.js
+- `tests/validate-epam-jobs.js` — CI fast validator (HEAD only); thin wrapper over src/job-validator.js + solr.js
 - `index.js` — main scraper orchestrator
+
+### 8. Caching Behavior
+- `tmp/company.json` — per-run scratch cache (gitignored)
+- `company.json` (root) — committed cache, refreshed every 7 days (configurable via `CACHE_MAX_AGE_DAYS` in company.js)
+- If ANAF is unreachable AND cache is stale, the code falls back to the stale cache rather than failing the scrape
+- `docs/company.json` is regenerated on every scrape so GitHub Pages can read company identity

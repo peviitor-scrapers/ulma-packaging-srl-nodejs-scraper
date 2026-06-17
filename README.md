@@ -25,9 +25,13 @@ Proiectul automatizează colectarea zilnică a job-urilor EPAM din România, men
 
 - Extrage job-uri din API-ul public EPAM Careers Romania
 - Validează compania via ANAF (CUI, status activ/inactiv, adresă completă)
+- **Cache ANAF la 7 zile** — committed în repo, nu lovește demoANAF la fiecare scrape
+- **Fallback la cache stale** dacă ANAF e indisponibil
 - Cross-validează cu Peviitor API
 - Stochează în SOLR (job core + company core)
-- GitHub Actions: scrape zilnic + testare automată (unit, integration, e2e)
+- Generează `docs/jobs.md` automat — accesibil pe GitHub Pages
+- **Identitate companie într-un singur fișier** (`config/company.json`) — derivare ușoară pentru alte companii
+- GitHub Actions: scrape zilnic + testare automată (unit, integration, e2e, consistency)
 - Teste SOLR condiționale — auto-skip când `SOLR_AUTH` nu e setat
 - Se identifică prin User-Agent: `job_seeker_ro_spider`
 
@@ -39,10 +43,14 @@ Proiectul automatizează colectarea zilnică a job-urilor EPAM din România, men
 ├── demoanaf.js                 # CLI wrapper for src/anaf.js
 ├── solr.js                     # SOLR operations (query, upsert, delete, company)
 ├── validate-jobs.js            # Job URL validator — checks active/expired, deletes stale jobs
+├── config/
+│   ├── company.json            # Single source of truth: CIF, brand, URLs, API params
+│   └── company.js              # ESM loader for company.json
 ├── src/
 │   ├── anaf.js                 # ANAF API core module (search + company details)
-│   └── markdown-generator.js   # Generates docs/jobs.md from scraped data
-├── company.json                # Cached company data (fallback when ANAF is down)
+│   ├── markdown-generator.js   # Generates docs/jobs.md from scraped data
+│   └── job-validator.js        # Shared validateByHead + validateByContent
+├── company.json                # ANAF data cache (committed, 7-day TTL)
 ├── tests/
 │   ├── package.json            # Jest config for test suite
 │   ├── company.json            # Mock ANAF data used in unit tests

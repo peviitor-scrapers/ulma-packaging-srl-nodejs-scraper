@@ -89,6 +89,9 @@ When running `node index.js`, the following steps happen automatically:
 ## Workflow Flowchart
 
 ```
+config/company.json (single source of truth: CIF, brand, URLs)
+    │
+    ▼
 index.js
     │
     ▼
@@ -96,7 +99,9 @@ querySOLR(CIF) - just count, don't delete
     │
     ▼
 company.js (validate company)
-    ├── ANAF API ──► get company name + CIF
+    ├── load cache (tmp/company.json → company.json)
+    │   └── if fresh (<7 days), skip ANAF entirely
+    ├── ANAF API ──► get company name + CIF (only if cache stale/missing)
     ├── Peviitor API ──► validate company model
     └── SOLR ──► check existing jobs count
     │
@@ -122,14 +127,17 @@ generateJobsMarkdown() → docs/jobs.md
 
 | File | Role |
 |------|------|
+| `config/company.json` | **Single source of truth** for company identity (CIF, brand, URLs, API params) |
+| `config/company.js` | ESM wrapper that loads `config/company.json` for Node code |
 | `index.js` | Main entry point - full workflow: validate company → scrape → transform → upsert → generate docs/jobs.md |
-| `company.js` | Validates company via ANAF + Peviitor, checks if company is active/inactive, saves company.json |
+| `company.js` | Validates company via ANAF + Peviitor; caches in root `company.json` (7-day TTL) and `tmp/company.json` |
 | `solr.js` | SOLR operations module - query, delete, upsert jobs + standalone commands |
-| `validate-jobs.js` | Job URL validator - checks active/expired status in SOLR, optionally deletes expired jobs |
-| `src/anaf.js` | ANAF API core module - searchCompany(brand) and getCompanyFromANAF(cif) |
-| `src/markdown-generator.js` | Generates docs/jobs.md with company info and all scraped jobs |
+| `validate-jobs.js` | Manual deep validator (content-aware); thin CLI wrapper over `src/job-validator.js` |
+| `src/anaf.js` | ANAF API core module - searchCompany(brand) and getCompanyFromANAF(cif) with 3-retry/2s-backoff |
+| `src/markdown-generator.js` | Generates `docs/jobs.md` with company info and all scraped jobs |
+| `src/job-validator.js` | Shared validation primitives: `validateByHead`, `validateByContent`, `DEFAULT_EXPIRED_KEYWORDS` |
 | `demoanaf.js` | CLI entry point for ANAF module (thin wrapper around src/anaf.js) |
-| `tests/validate-epam-jobs.js` | SOLR job URL validation script specific to EPAM |
+| `tests/validate-epam-jobs.js` | CI fast validator (HEAD only); thin CLI over `src/job-validator.js` + `solr.js` |
 | `tests/unit/index.test.js` | Unit tests for parseApiJobs, mapToJobModel, transformJobsForSOLR |
 | `tests/unit/company.test.js` | Unit tests for validateAndGetCompany and fallback caching |
 | `tests/unit/solr.test.js` | Unit tests for SOLR query, upsert, delete operations |

@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-06-17
+
+### Fixed
+- `index.js`: Step 6 log said "Step 4" (cosmetic console output bug)
+- `company.js`: Stale JSDoc about "hardcoded COMPANY_CIF" — now reflects config + cache behavior
+- `src/markdown-generator.js`: Added JSDoc for `generateJobsMarkdown()`
+
+### Changed
+- Documentation pass — `AGENTS.md`, `README.md`, `docs/README.md`, `instructions.md` now reflect the post-refactor state (config/, caching, job-validator)
+
 ## [1.4.0] - 2026-06-17
 
 ### Added

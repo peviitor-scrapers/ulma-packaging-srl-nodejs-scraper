@@ -242,8 +242,10 @@ function loadCachedCompanyData() {
 // ============================================================================
 
 /**
- * Gets company data, preferring cache over live API calls
- * Uses hardcoded COMPANY_CIF to fetch from ANAF directly
+ * Gets company data, preferring cache over live API calls.
+ * CIF and brand are read from config/company.json.
+ * Cache order: tmp/company.json → company.json (root) → ANAF live.
+ * Stale cache is used as fallback if ANAF is unreachable.
  * @returns {Promise<Object>} - Company data with company name, CIF, and active status
  */
 export async function getCompanyData() {

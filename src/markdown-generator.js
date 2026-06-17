@@ -1,3 +1,10 @@
+/**
+ * Generates a markdown document with company info and current job listings.
+ *
+ * @param {Object} companyData - Company info (id, company, brand, status, location[], website[], career[], lastScraped)
+ * @param {Array<Object>} jobs - Scraped jobs (url, title, workmode?, location?[], tags?[], status?)
+ * @returns {string} Markdown content suitable for writing to docs/jobs.md
+ */
 export function generateJobsMarkdown(companyData, jobs) {
   const now = new Date().toISOString();
   const lines = [];

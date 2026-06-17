@@ -394,7 +394,7 @@ async function main() {
     console.log("Saved docs/company.json");
 
     // Step 6: Upsert all jobs to Solr (add/update)
-    console.log("\n=== Step 4: Upsert jobs to SOLR ===");
+    console.log("\n=== Step 6: Upsert jobs to SOLR ===");
     await upsertJobs(transformedPayload.jobs);
 
     // Step 7: Verify final count in Solr
