@@ -48,7 +48,9 @@ When you replace `parseApiJobs()` in `index.js` (EPAM JSON API) with a new parse
 - Update URL generation tests — the URL construction logic changes per data source
 - Also update `tests/unit/company.test.js`: replace `EPAM_ANAF_RECORD` and all hardcoded `33159615` / `EPAM SYSTEMS INTERNATIONAL SRL` values with the new company's CIF and legal name
 
-Failing to update these tests will break CI immediately — the unit test step gates all downstream pipeline steps.
+- **Also update `tests/integration/workflow.test.js`** and **`tests/e2e/scraper.test.js`**: replace the `EPAM_CIF`/`TEST_CIF` constant (`33159615`) with the new CIF, update all hardcoded company name and brand assertions, and replace EPAM API URLs/parsing with the new data source's URL and parser function name
+
+Failing to update these tests will break CI immediately — the unit test step gates all downstream pipeline steps, and integration/E2E tests run next.
 
 ### 3. Adjust the scraper to the new data source
 
