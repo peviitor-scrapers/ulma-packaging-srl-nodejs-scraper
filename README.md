@@ -154,6 +154,21 @@ The `automation-testing.yml` workflow runs on every push and pull request. It:
 3. Validates data integrity in Solr
 4. Pushes test reports to [`docs/test-results/`](https://sebiboga.github.io/epam-systems-international-srl-nodejs-scraper/test-results/)
 
+## 🌱 Derived Scrapers
+
+Acest template a fost folosit cu succes pentru a deriva scraper-e pentru alte companii din ecosistemul peviitor.ro:
+
+| Repo | Companie | CIF | Metodă | Status |
+|------|----------|-----|--------|--------|
+| [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper) | MEJIX SRL | 17372688 | HTML scraping (cheerio) | ✅ Live |
+
+**Învățăminte din prima derivare (MEJIX):**
+- Doar un singur fișier de editat pentru identitate: `config/company.json` ✅
+- Logica de scraping în `index.js` poate fi complet diferită (API vs HTML) fără să afecteze restul pipeline-ului
+- Toate cele 4 niveluri de teste (unit, integration, e2e, consistency) și workflow-urile CI au funcționat pe MEJIX fără ajustări structurale
+
+Pentru a deriva un scraper nou, urmează [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Acknowledgments
 
 This project was developed with assistance from **[Claude Code](https://claude.ai/code)** by Anthropic.

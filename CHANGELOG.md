@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2026-06-17
+
+### Added
+- README: "Derived Scrapers" section listing [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper) as first known derivative, with lessons learned from the first derivation
+- CONTRIBUTING: "Validated in production" callout pointing to MEJIX as a working reference
+
+### Verified
+- Template pattern scales: same checklist + same pipeline produced a working scraper for a company with completely different scraping mechanics (HTML vs JSON API)
+
 ## [1.4.2] - 2026-06-17
 
 ### Removed

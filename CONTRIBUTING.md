@@ -6,6 +6,8 @@ Thank you for your interest in contributing!
 
 This is the **reference implementation** for Node.js job scrapers in the peviitor.ro ecosystem. New scrapers for other Romanian companies should be derived from this pattern — same structure, same workflows, same testing layers.
 
+> **✅ Validated in production.** The first derived scraper, [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper), follows this exact checklist. Use it as a reference if anything below is unclear.
+
 ## Deriving a New Scraper for Another Company
 
 Use this checklist when starting a scraper for `<COMPANY>`:
