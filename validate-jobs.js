@@ -1,14 +1,22 @@
 /**
- * Job URL Validator - Validates if job URLs are active or expired
- * 
- * PURPOSE: Checks if job URLs in Solr are still active or if they point to expired pages.
- * Uses OpenCode/BigPickle AI to analyze job description pages.
- * 
+ * Generic Job URL Validator (content-aware, manual use)
+ *
+ * PURPOSE: Deep validation of job URLs — fetches full page body and
+ * searches for "no longer available" / "position filled" / "expired"
+ * keywords. Slower than HEAD-only checks but catches soft-404s where
+ * the URL still returns 200 but the job is gone.
+ *
+ * SCOPE: Generic — works with ANY CIF, single URL, or list from file.
+ * Used for ad-hoc cleanup and debugging. NOT called from CI.
+ *
+ * For the fast CI-friendly EPAM-only HEAD check, see
+ * tests/validate-epam-jobs.js.
+ *
  * Usage:
- *   node validate-jobs.js <CIF>                    - Query Solr and validate all jobs
- *   node validate-jobs.js --url <url>              - Check a single URL
+ *   node validate-jobs.js <CIF>                   - Query Solr and validate all jobs for a CIF
+ *   node validate-jobs.js --url <url>             - Check a single URL
  *   node validate-jobs.js --urls <url1> <url2>... - Check multiple URLs
- *   node validate-jobs.js --file <file.json>       - Check URLs from JSON file (array or {jobs: [...]})
+ *   node validate-jobs.js --file <file.json>     - Check URLs from JSON file (array or {jobs:[...]})
  */
 
 import fetch from "node-fetch";

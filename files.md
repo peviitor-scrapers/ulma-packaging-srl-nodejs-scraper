@@ -8,7 +8,7 @@
 | `company.js` | Validates company via ANAF + Peviitor APIs, checks if company is active/inactive |
 | `solr.js` | SOLR operations module - exports querySOLR, deleteJobByUrl, upsertJobs + standalone verify/extract/company commands |
 | `demoanaf.js` | CLI entry point for ANAF module (thin wrapper around src/anaf.js) |
-| `validate-jobs.js` | Job URL validator - queries SOLR by CIF, checks active/expired status, optionally deletes expired jobs |
+| `validate-jobs.js` | **Generic deep validator (manual use).** Full GET requests, parses page body for "no longer available" keywords. Works with any CIF, single URL, or file. Slower but catches soft-404s. Not used by CI. |
 
 ## JavaScript Files — src/
 
@@ -23,7 +23,7 @@
 |------|-------------|
 | `tests/package.json` | Jest config for test suite - experimental VM modules, test scripts (unit/integration/e2e/consistency) |
 | `tests/company.json` | Mock ANAF company data for EPAM used in unit tests |
-| `tests/validate-epam-jobs.js` | Validation script - queries SOLR, checks job URLs, detects inactive/expired, optionally deletes |
+| `tests/validate-epam-jobs.js` | **EPAM-specific fast validator (used by CI).** HEAD requests only, hardcoded EPAM CIF. Called nightly by `automation-testing.yml`. Supports `--dry-run` and `--delete`. |
 | `tests/unit/index.test.js` | Unit tests for index.js - parseApiJobs, mapToJobModel, transformJobsForSOLR |
 | `tests/unit/company.test.js` | Unit tests for company.js - getCompanyBrand, validateAndGetCompany, fallback caching |
 | `tests/unit/solr.test.js` | Unit tests for solr.js - query, upsert, delete, HTTP error handling |
