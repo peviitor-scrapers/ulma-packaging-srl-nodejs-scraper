@@ -43,10 +43,9 @@ describe('solr.js', () => {
       expect(auth).toBe('test:test');
     });
 
-    it('should return undefined when not set', () => {
+    it('should throw when not set', () => {
       delete process.env.SOLR_AUTH;
-      const auth = solr.getSolrAuth();
-      expect(auth).toBeUndefined();
+      expect(() => solr.getSolrAuth()).toThrow('SOLR_AUTH not set in environment');
       process.env.SOLR_AUTH = 'test:test';
     });
   });

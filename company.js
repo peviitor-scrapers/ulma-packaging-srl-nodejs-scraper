@@ -30,14 +30,6 @@ const ROOT_CACHE_PATH = "company.json";
 // Local tmp cache (per-run, gitignored)
 const TMP_CACHE_PATH = "tmp/company.json";
 
-/**
- * Returns the company brand name
- * @returns {string} - The brand name
- */
-export function getCompanyBrand() {
-  return COMPANY_BRAND;
-}
-
 // ============================================================================
 // COMPANY MODEL - Defines the expected schema for company data
 // ============================================================================

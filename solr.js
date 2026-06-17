@@ -39,11 +39,17 @@ const SOLR_COMPANY_URL = "https://solr.peviitor.ro/solr/company"; // Company cor
 const TIMEOUT = 10000;
 
 /**
- * Gets SOLR_AUTH from environment
- * @returns {string} - Base64 encoded auth credentials
+ * Returns the SOLR_AUTH credential string ("user:password") from the environment,
+ * throwing if it is missing. All SOLR operations in this module use this helper
+ * so the error message stays consistent.
+ *
+ * @returns {string} The SOLR_AUTH credential string
+ * @throws {Error} If SOLR_AUTH is not set
  */
 export function getSolrAuth() {
-  return process.env.SOLR_AUTH;
+  const auth = process.env.SOLR_AUTH;
+  if (!auth) throw new Error("SOLR_AUTH not set in environment");
+  return auth;
 }
 
 // ============================================================================
@@ -56,8 +62,7 @@ export function getSolrAuth() {
  * @returns {Promise<Object>} - Solr response with numFound and docs array
  */
 export async function querySOLR(cif) {
-  const AUTH = process.env.SOLR_AUTH;
-  if (!AUTH) throw new Error("SOLR_AUTH not set in environment");
+  const AUTH = getSolrAuth();
 
   const params = new URLSearchParams({
     q: `cif:${cif}`,  // Query by CIF field
@@ -90,8 +95,7 @@ export async function querySOLR(cif) {
  * @param {Object} companyDoc - Company document with id, company, brand, status, location, etc.
  */
 export async function upsertCompany(companyDoc) {
-  const AUTH = process.env.SOLR_AUTH;
-  if (!AUTH) throw new Error("SOLR_AUTH not set in environment");
+  const AUTH = getSolrAuth();
 
   const params = new URLSearchParams({ commit: "true" });
 
@@ -121,8 +125,7 @@ export async function upsertCompany(companyDoc) {
  * @returns {Promise<Object>} - Solr response with company docs
  */
 export async function queryCompanySOLR(companyQuery) {
-  const AUTH = process.env.SOLR_AUTH;
-  if (!AUTH) throw new Error("SOLR_AUTH not set in environment");
+  const AUTH = getSolrAuth();
 
   const params = new URLSearchParams({
     q: companyQuery,
@@ -156,8 +159,7 @@ export async function queryCompanySOLR(companyQuery) {
  * @param {string} cif - Company CIF to delete jobs for
  */
 export async function deleteJobsByCIF(cif) {
-  const AUTH = process.env.SOLR_AUTH;
-  if (!AUTH) throw new Error("SOLR_AUTH not set in environment");
+  const AUTH = getSolrAuth();
 
   const params = new URLSearchParams({ commit: "true" });
 
@@ -190,8 +192,7 @@ export async function deleteJobsByCIF(cif) {
  * @param {string} url - Job URL to delete
  */
 export async function deleteJobByUrl(url) {
-  const AUTH = process.env.SOLR_AUTH;
-  if (!AUTH) throw new Error("SOLR_AUTH not set in environment");
+  const AUTH = getSolrAuth();
 
   const params = new URLSearchParams({ commit: "true" });
 
@@ -225,8 +226,7 @@ export async function deleteJobByUrl(url) {
  * @param {Array} jobs - Array of job objects to upsert
  */
 export async function upsertJobs(jobs) {
-  const AUTH = process.env.SOLR_AUTH;
-  if (!AUTH) throw new Error("SOLR_AUTH not set in environment");
+  const AUTH = getSolrAuth();
 
   const params = new URLSearchParams({ commit: "true" });
 

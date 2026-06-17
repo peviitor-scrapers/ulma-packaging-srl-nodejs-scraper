@@ -82,14 +82,6 @@ describe('company.js', () => {
     clearAllCaches();
   });
 
-  describe('getCompanyBrand', () => {
-    it('should return the company brand', () => {
-      const brand = company.getCompanyBrand();
-      expect(typeof brand).toBe('string');
-      expect(brand).toBe('EPAM');
-    });
-  });
-
   describe('getCompanyData (no cache)', () => {
     it('should fetch EPAM via direct CIF lookup and return company data', async () => {
       mockFetch.mockResolvedValueOnce(anafCompanyResponse(EPAM_ANAF_RECORD));
