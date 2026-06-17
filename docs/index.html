@@ -345,8 +345,21 @@
 </div>
 
 <script>
-const COMPANY = "EPAM SYSTEMS INTERNATIONAL SRL";
-const COMPANY_CIF = "33159615";
+// Loaded from docs/company.json (regenerated on every scrape)
+let COMPANY = "EPAM SYSTEMS INTERNATIONAL SRL";
+let COMPANY_CIF = "33159615";
+
+async function loadCompanyConfig() {
+  try {
+    const res = await fetch("./company.json", { cache: "no-cache" });
+    if (!res.ok) return;
+    const cfg = await res.json();
+    if (cfg.legalName) COMPANY = cfg.legalName;
+    if (cfg.cif) COMPANY_CIF = cfg.cif;
+  } catch (e) {
+    console.warn("company.json not available, using fallback constants");
+  }
+}
 
 const i18n = {
   en: {
@@ -389,6 +402,20 @@ const i18n = {
   }
 };
 
+function applyDynamicTitle() {
+  const name = window.__companyName;
+  if (!name) return;
+  const lang = document.documentElement.lang;
+  const h1 = document.querySelector("h1[data-i18n='pageTitle']");
+  if (lang === "ro") {
+    document.title = `Locuri de muncă de la ${name} — peviitor.ro`;
+    if (h1) h1.textContent = `Locuri de muncă de la ${name}`;
+  } else {
+    document.title = `${name} Jobs — peviitor.ro`;
+    if (h1) h1.textContent = `${name} Jobs`;
+  }
+}
+
 function setLang(lang) {
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
@@ -400,6 +427,7 @@ function setLang(lang) {
   document.getElementById("lang-" + lang).classList.add("active");
   document.documentElement.lang = lang;
   localStorage.setItem("peviitor-lang", lang);
+  applyDynamicTitle();
 }
 
 const saved = localStorage.getItem("peviitor-lang");
@@ -425,13 +453,8 @@ async function loadStats() {
         <div class="company-item"><strong>Ultimul scrape:</strong> ${comp.lastScraped || "—"}</div>
       `;
 
-      const lang = document.documentElement.lang;
-      const companyName = comp.company || COMPANY;
-      if (lang === "ro") {
-        const roTitle = `Locuri de muncă de la ${companyName} — peviitor.ro`;
-        document.title = roTitle;
-        document.querySelector("h1[data-i18n='pageTitle']").textContent = `Locuri de muncă de la ${companyName}`;
-      }
+      window.__companyName = comp.company || COMPANY;
+      applyDynamicTitle();
     }
   } catch (e) {
     console.error("Company load failed:", e);
@@ -498,7 +521,7 @@ async function loadStats() {
   }
 }
 
-loadStats();
+loadCompanyConfig().then(loadStats);
 setInterval(loadStats, 30000);
 </script>
 </body>

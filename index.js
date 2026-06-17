@@ -12,22 +12,18 @@ import { fileURLToPath } from "url";
 import { validateAndGetCompany } from "./company.js";
 import { querySOLR, deleteJobByUrl, upsertJobs, upsertCompany } from "./solr.js";
 import { generateJobsMarkdown } from "./src/markdown-generator.js";
+import companyConfig from "./config/company.js";
 
 // ============================================================================
-// CONFIGURATION CONSTANTS
+// CONFIGURATION CONSTANTS — derived from config/company.json
 // ============================================================================
 
-// EPAM's unique identifier in Romanian business registry (CIF/CUI)
-const COMPANY_CIF = "33159615";
+const COMPANY_CIF = companyConfig.cif;
+const JOB_BASE = companyConfig.apiBase;
+const ROMANIA_COUNTRY_ID = companyConfig.apiCountryId;
 
 // Request timeout in milliseconds (10 seconds)
 const TIMEOUT = 10000;
-
-// Base URL for EPAM job listings
-const JOB_BASE = "https://careers.epam.com";
-
-// Romania's country ID in EPAM's job API system
-const ROMANIA_COUNTRY_ID = "8150000000000001155";
 
 // Number of jobs to fetch per API page request
 const PAGE_SIZE = 10;
@@ -338,13 +334,13 @@ async function main() {
       await upsertCompany({
         id: cif,
         company,
-        brand: "EPAM",
+        brand: companyConfig.brand,
         status: "activ",
-        location: address ? [address] : ["București"],
-        website: ["https://www.epam.com"],
-        career: ["https://careers.epam.com"],
+        location: address ? [address] : [companyConfig.defaultLocation],
+        website: [companyConfig.website],
+        career: [companyConfig.careerUrl],
         lastScraped: new Date().toISOString().split('T')[0],
-        scraperFile: "https://raw.githubusercontent.com/sebiboga/epam-systems-international-srl-nodejs-scraper/main/.github/workflows/job-seeker-ro-spider.yml"
+        scraperFile: companyConfig.scraperFile
       });
     } catch (err) {
       console.log(`Note: Could not upsert company to SOLR core: ${err.message}`);
@@ -381,17 +377,21 @@ async function main() {
     const companyData = {
       id: localCif,
       company: transformedPayload.company,
-      brand: "EPAM",
+      brand: companyConfig.brand,
       status: "activ",
-      location: address ? [address] : ["București"],
-      website: ["https://www.epam.com"],
-      career: ["https://careers.epam.com"],
+      location: address ? [address] : [companyConfig.defaultLocation],
+      website: [companyConfig.website],
+      career: [companyConfig.careerUrl],
       lastScraped: new Date().toISOString().split('T')[0]
     };
     const markdown = generateJobsMarkdown(companyData, transformedPayload.jobs);
     fs.mkdirSync("docs", { recursive: true });
     fs.writeFileSync("docs/jobs.md", markdown, "utf-8");
     console.log("Saved docs/jobs.md");
+
+    // Publish a copy of company config for the static HTML to consume
+    fs.writeFileSync("docs/company.json", JSON.stringify(companyConfig, null, 2), "utf-8");
+    console.log("Saved docs/company.json");
 
     // Step 6: Upsert all jobs to Solr (add/update)
     console.log("\n=== Step 4: Upsert jobs to SOLR ===");

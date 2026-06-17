@@ -10,18 +10,25 @@ import fetch from "node-fetch";
 import fs from "fs";
 import { querySOLR, deleteJobsByCIF } from "./solr.js";
 import { getCompanyFromANAF } from "./src/anaf.js";
+import companyConfig from "./config/company.js";
 
 // ============================================================================
-// CONFIGURATION
+// CONFIGURATION — derived from config/company.json
 // ============================================================================
 
 // Peviitor API base URL for company validation
 const Peviitor_API_URL = "https://api.peviitor.ro/v1/company/";
 
-const COMPANY_CIF = "33159615";
+const COMPANY_CIF = companyConfig.cif;
+const COMPANY_BRAND = companyConfig.brand;
 
-// Company brand name (used for searching in ANAF)
-const COMPANY_BRAND = "EPAM";
+// Cache TTL — re-fetch from ANAF if cached data is older than this
+const CACHE_MAX_AGE_DAYS = 7;
+
+// Root cache file (committed to repo, survives between CI runs)
+const ROOT_CACHE_PATH = "company.json";
+// Local tmp cache (per-run, gitignored)
+const TMP_CACHE_PATH = "tmp/company.json";
 
 /**
  * Returns the company brand name
@@ -175,31 +182,56 @@ function saveCompanyData(anafData, peviitorData) {
     }
   };
   
-  // Save to file for future use
+  const json = JSON.stringify(companyData, null, 2);
+
+  // Always write tmp cache (per-run scratch)
   fs.mkdirSync("tmp", { recursive: true });
-  fs.writeFileSync("tmp/company.json", JSON.stringify(companyData, null, 2), "utf-8");
-  console.log("\n✅ Saved company data to tmp/company.json");
-  console.log("This file can be used to restore company details if SOLR data is lost.\n");
-  
+  fs.writeFileSync(TMP_CACHE_PATH, json, "utf-8");
+  console.log(`\n✅ Saved company data to ${TMP_CACHE_PATH}`);
+
+  // Also update root cache (committed to repo, survives between CI runs)
+  fs.writeFileSync(ROOT_CACHE_PATH, json, "utf-8");
+  console.log(`✅ Updated root cache ${ROOT_CACHE_PATH}\n`);
+
   return companyData;
 }
 
 /**
- * Loads cached company data from company.json
- * Falls back to ANAF API if cache is missing or invalid
- * @returns {Object|null} - Cached company data or null
+ * Validates that cached data has the required ANAF fields.
+ */
+function isValidCache(data) {
+  return Boolean(data?.anaf?.cui && data?.anaf?.name);
+}
+
+/**
+ * Checks whether the cache is still fresh (within CACHE_MAX_AGE_DAYS).
+ */
+function isCacheFresh(data) {
+  if (!data?.validatedAt) return false;
+  const ageMs = Date.now() - new Date(data.validatedAt).getTime();
+  const ageDays = ageMs / (1000 * 60 * 60 * 24);
+  return ageDays < CACHE_MAX_AGE_DAYS;
+}
+
+/**
+ * Loads cached company data, checking tmp/ first (fresh per-run), then root (committed backup).
+ * Returns the cache if valid AND fresh. Returns null if stale or missing.
+ * Returns `{ ...data, _stale: true }` if found but stale — caller may still use as fallback.
  */
 function loadCachedCompanyData() {
-  if (fs.existsSync("tmp/company.json")) {
+  for (const cachePath of [TMP_CACHE_PATH, ROOT_CACHE_PATH]) {
+    if (!fs.existsSync(cachePath)) continue;
     try {
-      const data = JSON.parse(fs.readFileSync("tmp/company.json", "utf-8"));
-      // Validate cache has required fields
-      if (data?.anaf?.cui && data?.anaf?.name) {
-        console.log("Found cached company data in company.json");
+      const data = JSON.parse(fs.readFileSync(cachePath, "utf-8"));
+      if (!isValidCache(data)) continue;
+      if (isCacheFresh(data)) {
+        console.log(`Found fresh cached company data in ${cachePath}`);
         return data;
       }
+      console.log(`Found stale cached company data in ${cachePath} (older than ${CACHE_MAX_AGE_DAYS} days)`);
+      return { ...data, _stale: true };
     } catch (e) {
-      console.log("Warning: Could not load cached company data");
+      console.log(`Warning: Could not parse ${cachePath}`);
     }
   }
   return null;
@@ -217,7 +249,8 @@ function loadCachedCompanyData() {
 export async function getCompanyData() {
   const cachedData = loadCachedCompanyData();
 
-  if (cachedData?.summary?.cif) {
+  // Fresh cache → use it, skip ANAF
+  if (cachedData && !cachedData._stale && cachedData.summary?.cif) {
     console.log(`Using cached company data for CIF: ${cachedData.summary.cif}`);
     const anafData = cachedData.anaf;
 
@@ -232,8 +265,24 @@ export async function getCompanyData() {
     return { company, cif, active, anafData };
   }
 
-  console.log(`Fetching company data for CIF: ${COMPANY_CIF}`);
-  const anafData = await getCompanyFromANAF(COMPANY_CIF);
+  // Stale or missing cache → try ANAF, fall back to stale cache if ANAF fails
+  console.log(`Fetching fresh company data from ANAF for CIF: ${COMPANY_CIF}`);
+  let anafData;
+  try {
+    anafData = await getCompanyFromANAF(COMPANY_CIF);
+  } catch (err) {
+    if (cachedData?._stale) {
+      console.log(`⚠️ ANAF unreachable (${err.message}) — falling back to stale cache`);
+      const a = cachedData.anaf;
+      return {
+        company: a.name.toUpperCase(),
+        cif: a.cui.toString(),
+        active: !a.inactive,
+        anafData: a
+      };
+    }
+    throw err;
+  }
 
   if (!anafData) {
     throw new Error("No data from ANAF - cannot proceed with scraping");

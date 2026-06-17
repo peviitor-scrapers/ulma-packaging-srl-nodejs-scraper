@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-06-17
+
+### Added
+- `config/company.json` and `config/company.js` — single source of truth for company identity (CIF, brand, URLs, API config)
+- ANAF data caching honoured at root `company.json` (committed to repo) — CI no longer hits demoANAF on every scrape; refresh threshold is 7 days
+- Graceful fallback to stale cache if ANAF is unreachable
+- `docs/company.json` regenerated on each scrape so the live page reads company identity dynamically
+
+### Changed
+- `index.js`, `company.js`, `demoanaf.js`, `tests/validate-epam-jobs.js`, `docs/index.html`, `automation-testing.yml` all now read from `config/company.json` instead of hardcoded constants
+- CONTRIBUTING.md derivation checklist simplified — editing `config/company.json` is now the primary step
+
+### Fixed
+- Stale company.json at repo root was being ignored — codepath only checked `tmp/company.json` which is gitignored, causing every CI run to refetch from ANAF
+
 ## [1.2.0] - 2026-06-17
 
 ### Added

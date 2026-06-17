@@ -8,21 +8,24 @@ jest.unstable_mockModule('node-fetch', () => ({
 }));
 
 const COMPANY_JSON_PATH = 'tmp/company.json';
+const ROOT_COMPANY_JSON_PATH = 'company.json';
 
-function backupCompanyJson() {
-  if (fs.existsSync(COMPANY_JSON_PATH)) {
-    const content = fs.readFileSync(COMPANY_JSON_PATH, 'utf-8');
-    fs.renameSync(COMPANY_JSON_PATH, `${COMPANY_JSON_PATH}.bak`);
-    return content;
+function backupFile(path) {
+  if (fs.existsSync(path)) {
+    fs.renameSync(path, `${path}.bak`);
   }
-  return null;
 }
 
-function restoreCompanyJson() {
-  if (fs.existsSync(`${COMPANY_JSON_PATH}.bak`)) {
-    fs.renameSync(`${COMPANY_JSON_PATH}.bak`, COMPANY_JSON_PATH);
+function restoreFile(path) {
+  if (fs.existsSync(`${path}.bak`)) {
+    fs.renameSync(`${path}.bak`, path);
   }
-  return null;
+}
+
+function clearAllCaches() {
+  for (const p of [COMPANY_JSON_PATH, ROOT_COMPANY_JSON_PATH]) {
+    if (fs.existsSync(p)) fs.unlinkSync(p);
+  }
 }
 
 function anafCompanyResponse(data) {
@@ -59,25 +62,24 @@ const EPAM_ANAF_RECORD = {
 
 describe('company.js', () => {
   let company;
-  let savedCompanyJson;
 
   beforeAll(async () => {
     process.env.SOLR_AUTH = 'test:test';
     fs.mkdirSync("tmp", { recursive: true });
-    savedCompanyJson = backupCompanyJson();
+    backupFile(COMPANY_JSON_PATH);
+    backupFile(ROOT_COMPANY_JSON_PATH);
     company = await import('../../company.js');
   });
 
   afterAll(() => {
     delete process.env.SOLR_AUTH;
-    restoreCompanyJson();
+    restoreFile(COMPANY_JSON_PATH);
+    restoreFile(ROOT_COMPANY_JSON_PATH);
   });
 
   beforeEach(() => {
     mockFetch.mockReset();
-    if (fs.existsSync(COMPANY_JSON_PATH)) {
-      fs.unlinkSync(COMPANY_JSON_PATH);
-    }
+    clearAllCaches();
   });
 
   describe('getCompanyBrand', () => {
@@ -116,6 +118,7 @@ describe('company.js', () => {
 
   describe('getCompanyData (with cache)', () => {
     const cachedData = {
+      validatedAt: new Date().toISOString(),
       anaf: EPAM_ANAF_RECORD,
       summary: {
         company: 'EPAM SYSTEMS INTERNATIONAL SRL',
@@ -140,9 +143,7 @@ describe('company.js', () => {
 
   describe('validateAndGetCompany', () => {
     afterEach(() => {
-      if (fs.existsSync(COMPANY_JSON_PATH)) {
-        fs.unlinkSync(COMPANY_JSON_PATH);
-      }
+      clearAllCaches();
     });
 
     it('should return company data with status active', async () => {

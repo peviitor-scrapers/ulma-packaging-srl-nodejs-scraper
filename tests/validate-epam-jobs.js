@@ -15,10 +15,11 @@
  *   --delete     Delete invalid jobs from SOLR after listing
  */
 import fetch from "node-fetch";
+import companyConfig from "../config/company.js";
 
 const SOLR_URL = "https://solr.peviitor.ro/solr/job";
-const CIF = "33159615";
-const COMPANY = "EPAM SYSTEMS INTERNATIONAL SRL";
+const CIF = companyConfig.cif;
+const COMPANY = companyConfig.legalName;
 
 function getAuth() {
   return process.env.SOLR_AUTH;

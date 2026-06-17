@@ -19,17 +19,23 @@ Use this checklist when starting a scraper for `<COMPANY>`:
 
 ### 2. Update company identity
 
+**Primary edit (single source of truth):**
+
 | File | What to change |
 |------|---------------|
-| `index.js` | `COMPANY_CIF` constant — set to the new company's CIF |
-| `index.js` | `JOB_BASE` and the API URL — point to the new company's careers source |
-| `index.js` | Company-specific upsert payload (brand, website, career URLs) |
-| `tests/validate-epam-jobs.js` | Rename to `validate-<company>-jobs.js`; update `CIF` and `COMPANY` constants |
+| `config/company.json` | Edit all fields: `cif`, `legalName`, `brand`, `website`, `careerUrl`, `apiBase`, `apiCountryId`, `defaultLocation`, `scraperFile` |
+
+All scraper code, CI workflows, and the static HTML read from this file. You should not need to edit constants in `index.js`, `company.js`, `demoanaf.js`, `tests/validate-epam-jobs.js`, `docs/index.html`, or `.github/workflows/automation-testing.yml`.
+
+**Secondary edits (cosmetic / metadata):**
+
+| File | What to change |
+|------|---------------|
 | `tests/company.json` | Replace with ANAF mock for the new company |
 | `UPDATE-REPO-ABOUT.md` | New description with legal name and CIF |
 | `package.json` | `name` field |
-| `README.md` | Title, badges (URLs), Overview |
-| `docs/index.html` | `COMPANY` and `COMPANY_CIF` JS constants |
+| `README.md` | Title, badges (URLs to the new repo), Overview |
+| `tests/validate-epam-jobs.js` | Rename to `validate-<brand>-jobs.js` (optional) |
 
 ### 3. Adjust the scraper to the new data source
 
