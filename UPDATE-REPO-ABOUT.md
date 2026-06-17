@@ -1,7 +1,7 @@
 # Update Repo About
 
 ## Description
-web scraper pentru a aduce locurile de munca de la EPAM Romania in platforma peviitor.ro
+Scraper automat pentru locurile de muncă EPAM Systems International SRL (CIF: 33159615) — extrage din EPAM Careers API, validează via ANAF și publică pe peviitor.ro
 
 ## Topics (exactly 2, per TOPICS.md)
 - job-seeker-ro-spider
