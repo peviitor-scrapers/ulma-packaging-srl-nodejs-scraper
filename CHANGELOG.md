@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-17
+
+### Added
+- `src/markdown-generator.js` — generates `docs/jobs.md` with company info and all scraped jobs
+- `docs/jobs.md` committed to repo after each scrape run (available on GitHub Pages)
+- "Jobs MD" button in `docs/index.html` linking to `docs/jobs.md` (opens in new tab)
+- Workflow updated to commit `docs/jobs.md` alongside test results
+
 ## [1.0.0] - 2026-04-16
 
 ### Added

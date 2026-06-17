@@ -22,16 +22,18 @@ job_seeker_ro_spider
 3. **Scrape-uiește job-urile** — extrage lista completă de job-uri din API-ul public EPAM Careers, filtrat pe România
 4. **Transformă datele** — normalizează locațiile (doar orașe românești), tag-urile (lowercase), workmode-ul (remote/on-site/hybrid)
 5. **Stochează în SOLR** — upsert în `job` core (job-urile) și `company` core (datele companiei cu adresa completă)
+6. **Generează docs/jobs.md** — fișier markdown cu informații companie + toate job-urile curente, publicat pe [GitHub Pages](https://sebiboga.github.io/epam-systems-international-srl-nodejs-scraper/jobs.md)
 
 ## Structură proiect
 
 ```
-├── index.js           # Orchestrator principal
-├── company.js         # Validare companie (ANAF + Peviitor + SOLR)
-├── demoanaf.js        # CLI wrapper pentru src/anaf.js
-├── src/anaf.js        # Modul ANAF API (search + company details)
-├── solr.js            # Operații SOLR (query, upsert, delete, company)
-├── company.json       # Cache companie (fallback când ANAF e down)
+├── index.js                    # Orchestrator principal
+├── company.js                  # Validare companie (ANAF + Peviitor + SOLR)
+├── demoanaf.js                 # CLI wrapper pentru src/anaf.js
+├── src/anaf.js                 # Modul ANAF API (search + company details)
+├── src/markdown-generator.js   # Generează docs/jobs.md după scrape
+├── solr.js                     # Operații SOLR (query, upsert, delete, company)
+├── company.json                # Cache companie (fallback când ANAF e down)
 ├── ROBOTS.md          # Analiză robots.txt și politici de scraping
 ├── tests/
 │   ├── unit/          # 56 teste unitare (API-uri mock-uite)
