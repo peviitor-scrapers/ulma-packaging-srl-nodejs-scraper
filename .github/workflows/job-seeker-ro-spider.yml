@@ -19,11 +19,11 @@ jobs:
         with:
           node-version: '24'
           
-      - name: Install dependencies
-        run: npm install
-
       - name: Sync with remote
         run: git pull origin main --rebase -X theirs
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Pre-scrape — Unit Tests
         run: |
