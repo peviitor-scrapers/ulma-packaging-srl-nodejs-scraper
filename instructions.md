@@ -39,7 +39,7 @@ When working on this scraper:
 
 - **Node.js & JavaScript** - For scraping and data extraction
 - **Apache SOLR** - For data storage and indexing
-- **OpenCode + Big Pickle** - For development
+- **Claude Code** - For development
 
 ## Workflow Steps
 
@@ -118,11 +118,24 @@ upsertJobs() - SOLR handles duplicate by URL
 
 | File | Role |
 |------|------|
-| `index.js` | Main entry point - full workflow: extract existing → validate company → scrape → transform → upsert → verify |
+| `index.js` | Main entry point - full workflow: validate company → scrape → transform → upsert → generate docs/jobs.md |
 | `company.js` | Validates company via ANAF + Peviitor, checks if company is active/inactive, saves company.json |
 | `solr.js` | SOLR operations module - query, delete, upsert jobs + standalone commands |
+| `validate-jobs.js` | Job URL validator - checks active/expired status in SOLR, optionally deletes expired jobs |
 | `src/anaf.js` | ANAF API core module - searchCompany(brand) and getCompanyFromANAF(cif) |
+| `src/markdown-generator.js` | Generates docs/jobs.md with company info and all scraped jobs |
 | `demoanaf.js` | CLI entry point for ANAF module (thin wrapper around src/anaf.js) |
+| `tests/validate-epam-jobs.js` | SOLR job URL validation script specific to EPAM |
+| `tests/unit/index.test.js` | Unit tests for parseApiJobs, mapToJobModel, transformJobsForSOLR |
+| `tests/unit/company.test.js` | Unit tests for validateAndGetCompany and fallback caching |
+| `tests/unit/solr.test.js` | Unit tests for SOLR query, upsert, delete operations |
+| `tests/unit/demoanaf.test.js` | Unit tests for ANAF search and company retrieval |
+| `tests/integration/workflow.test.js` | Live integration tests - ANAF + SOLR |
+| `tests/e2e/scraper.test.js` | End-to-end tests with real EPAM API |
+| `tests/consistency/public.test.js` | Verifies repo is public on GitHub |
+| `tests/consistency/repo.test.js` | Verifies branch, Pages, secrets, workflow files |
+| `tests/consistency/topics.test.js` | Verifies required repo topics |
+| `tests/consistency/workflow-naming.test.js` | Validates workflow naming conventions |
 
 ## API Endpoints
 
