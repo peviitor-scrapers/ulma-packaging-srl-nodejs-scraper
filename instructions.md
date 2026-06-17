@@ -148,6 +148,22 @@ generateJobsMarkdown() → docs/jobs.md
 - **Peviitor API**: `https://api.peviitor.ro/v1/company/`
 - **Solr**: `https://solr.peviitor.ro/solr/job` (auth: via `SOLR_AUTH` environment variable)
 
+## Rate Limiting & Politeness
+
+The scraper is intentionally slow to be a good citizen:
+
+| Setting | Value | Where |
+|---------|-------|-------|
+| Delay between pages | 1000 ms | `index.js` — `sleep(1000)` in `scrapeAllListings()` |
+| Page size | 10 jobs | `index.js` — `PAGE_SIZE` constant |
+| Max pages | 10 | `index.js` — `MAX_PAGES` in `scrapeAllListings()` |
+| Request timeout | 10000 ms | `index.js` — `TIMEOUT` constant |
+| ANAF retries | 3 attempts, 2s exponential backoff | `src/anaf.js` |
+| Concurrency | 1 (sequential) | No `Promise.all` for paginated fetches |
+| User-Agent | `job_seeker_ro_spider` | Identifies the scraper in server logs |
+
+Derived scrapers should keep these defaults unless the target site explicitly permits otherwise.
+
 ## Environment Variables
 
 | Variable | Description |

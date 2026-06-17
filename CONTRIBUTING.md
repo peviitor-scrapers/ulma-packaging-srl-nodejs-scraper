@@ -1,14 +1,59 @@
-# Contributing to EPAM Job Scraper
+# Contributing
 
 Thank you for your interest in contributing!
 
-## How to Contribute
+## 📐 This Repo Is a Template
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+This is the **reference implementation** for Node.js job scrapers in the peviitor.ro ecosystem. New scrapers for other Romanian companies should be derived from this pattern — same structure, same workflows, same testing layers.
+
+## Deriving a New Scraper for Another Company
+
+Use this checklist when starting a scraper for `<COMPANY>`:
+
+### 1. Bootstrap the repository
+
+1. Create a new GitHub repo named `<company-slug>-nodejs-scraper` (e.g. `cognizant-romania-nodejs-scraper`)
+2. Mark it **public** (required — see [PUBLIC.md](PUBLIC.md))
+3. Add the two required topics: `job-seeker-ro-spider`, `peviitor-ro` (see [TOPICS.md](TOPICS.md))
+4. Copy this repo's contents as a starting point
+
+### 2. Update company identity
+
+| File | What to change |
+|------|---------------|
+| `index.js` | `COMPANY_CIF` constant — set to the new company's CIF |
+| `index.js` | `JOB_BASE` and the API URL — point to the new company's careers source |
+| `index.js` | Company-specific upsert payload (brand, website, career URLs) |
+| `tests/validate-epam-jobs.js` | Rename to `validate-<company>-jobs.js`; update `CIF` and `COMPANY` constants |
+| `tests/company.json` | Replace with ANAF mock for the new company |
+| `UPDATE-REPO-ABOUT.md` | New description with legal name and CIF |
+| `package.json` | `name` field |
+| `README.md` | Title, badges (URLs), Overview |
+| `docs/index.html` | `COMPANY` and `COMPANY_CIF` JS constants |
+
+### 3. Adjust the scraper to the new data source
+
+- Each careers site uses a different API/HTML structure — rewrite `fetchJobsPage()` and `parseApiJobs()` in `index.js` to match the new source
+- Keep the **output shape identical** — `mapToJobModel()` and `transformJobsForSOLR()` should not change, so the SOLR schema stays uniform across the ecosystem
+- Respect the target site's `robots.txt` — update [ROBOTS.md](ROBOTS.md) with the new analysis
+
+### 4. Wire up CI
+
+- The two workflows (`job-seeker-ro-spider.yml`, `automation-testing.yml`) can stay as-is — just confirm the scheduled times don't all hammer SOLR at once
+- Add `SOLR_AUTH` as a repo secret
+- Enable GitHub Pages (root: `docs/`)
+
+### 5. Validate
+
+Follow [VERIFY.md](VERIFY.md) before merging. The same 4 levels of tests (unit / integration / e2e / consistency) must all pass.
+
+## Code Style for Contributions to This Repo
+
+- Use ES6+ modules (`type: module` in `package.json`)
+- Add tests for new features in the matching `tests/<level>/` folder
+- Ensure all tests pass before submitting PR
+- Update relevant `.md` files (especially `files.md` and `AGENTS.md`) when adding new files
+- Reference a GitHub issue in every commit (see [ISSUES.md](ISSUES.md))
 
 ## Development Setup
 
@@ -23,20 +68,13 @@ npm install
 npm test
 ```
 
-## Code Style
-
-- Use ES6+ modules
-- Add tests for new features
-- Ensure all tests pass before submitting PR
-- Update documentation as needed
-
 ## Reporting Issues
 
-Please report issues via GitHub Issues with:
+Open a [GitHub Issue](https://github.com/sebiboga/epam-systems-international-srl-nodejs-scraper/issues) with:
 - Clear description of the problem
 - Steps to reproduce
 - Expected vs actual behavior
-- Environment details (Node version, OS, etc.)
+- Environment details (Node version, OS)
 
 ## License
 

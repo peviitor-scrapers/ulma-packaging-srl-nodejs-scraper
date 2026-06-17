@@ -15,6 +15,8 @@
 
 **job_seeker_ro_spider** — un scraper pentru job-urile EPAM Systems din România. Extrage anunțurile de pe [EPAM Careers Romania](https://careers.epam.com/en/jobs/romania) și le publică în [peviitor.ro](https://peviitor.ro) prin API-ul SOLR.
 
+> **📐 Template repository.** Acest repo este **referința** pentru toate scraper-ele Node.js din ecosistemul peviitor.ro. Toate scraper-ele noi pentru alte companii din România ar trebui derivate din acest pattern. Vezi [CONTRIBUTING.md](CONTRIBUTING.md) pentru pașii de derivare.
+
 ## Overview
 
 Proiectul automatizează colectarea zilnică a job-urilor EPAM din România, menținând board-ul peviitor.ro la zi cu cele mai recente oportunități de carieră.

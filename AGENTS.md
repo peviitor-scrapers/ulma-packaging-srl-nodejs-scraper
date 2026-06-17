@@ -3,6 +3,12 @@
 ## Project
 EPAM scraper for peviitor.ro (Node.js, ESM, Jest)
 
+## 📐 This Repo Is a Template
+This repo is the **reference implementation** for all Node.js scrapers in the peviitor.ro ecosystem. Other scrapers are derived from it. When making changes:
+- **Keep patterns generic and portable** — only the API parsing logic in `index.js` should be EPAM-specific
+- **Do not hardcode EPAM beyond what is already hardcoded** — new constants belong at the top of the file with a comment, so derived scrapers can override them in one place
+- **If you add a new file, update [CONTRIBUTING.md](CONTRIBUTING.md)** — the derivation checklist must stay accurate
+
 ## Critical Rules
 
 ### 1. Temporary Files

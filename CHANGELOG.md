@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-06-17
+
+### Added
+- Explicit "template repository" framing across README, AGENTS, CONTRIBUTING
+- CONTRIBUTING.md now includes a step-by-step checklist for deriving a scraper for a new company
+- Rate-limiting and politeness settings table in instructions.md
+
+### Fixed
+- CI workflows: moved `git pull --rebase` before `npm install` to avoid dirty-tree rebase failures
+- PUBLIC.md test path (`tests/unit/` → `tests/consistency/`)
+
 ## [1.1.0] - 2026-06-17
 
 ### Added
