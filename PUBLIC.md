@@ -11,7 +11,7 @@ All scrapers derived from this EPAM template **MUST** be **PUBLIC** repositories
 
 ## Enforcement
 
-A CI test (`tests/unit/public.test.js`) verifies this repository is public
+A CI test (`tests/consistency/public.test.js`) verifies this repository is public
 using the GitHub API. If the repo is private, the test fails.
 
 ## How to check

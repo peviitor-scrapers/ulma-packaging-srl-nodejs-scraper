@@ -112,6 +112,10 @@ transformJobsForSOLR()
     │
     ▼
 upsertJobs() - SOLR handles duplicate by URL
+    │
+    ▼
+generateJobsMarkdown() → docs/jobs.md
+    └── committed to repo by CI → available on GitHub Pages
 ```
 
 ## File Responsibilities
@@ -149,6 +153,10 @@ upsertJobs() - SOLR handles duplicate by URL
 | Variable | Description |
 |----------|-------------|
 | `SOLR_AUTH` | SOLR credentials in format `user:password` |
+| `GITHUB_REPOSITORY` | Used by consistency tests — format: `owner/repo` |
+| `GITHUB_TOKEN` | GitHub API token for consistency tests |
+
+`dotenv` loads `.env.local` automatically at startup — set variables there for local runs. Never commit `.env.local`.
 
 ## Standalone Commands
 
@@ -167,6 +175,15 @@ node demoanaf.js <CIF>
 
 # Search companies in ANAF by brand
 node demoanaf.js search <brand>
+
+# Validate job URLs from SOLR by CIF (check active/expired)
+node validate-jobs.js <CIF>
+
+# Validate a single job URL
+node validate-jobs.js url <url>
+
+# Delete expired jobs from SOLR by CIF
+node validate-jobs.js <CIF> --delete
 ```
 
 ## Testing

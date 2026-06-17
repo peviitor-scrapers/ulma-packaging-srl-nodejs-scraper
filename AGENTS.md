@@ -19,7 +19,8 @@ NEVER use paths outside the project (e.g. `C:\Users\...\AppData\Local\Temp\openc
 
 ### 3. Environment Variables
 - `SOLR_AUTH` must be set in `.env.local` for SOLR tests (format: `user:password`)
-- `.env.local` is in `.gitignore` — never commit it
+- `.env.local` is loaded automatically at runtime via `dotenv` (see `package.json`) — never commit it
+- Consistency tests also need `GITHUB_REPOSITORY` (format: `owner/repo`) and `GITHUB_TOKEN`
 
 ### 4. Testing
 ```bash
@@ -46,12 +47,14 @@ npm run test:consistency
 
 ### 6. Verification
 - După orice modificare, urmează [VERIFY.md](VERIFY.md) pas cu pas
-- Ultimul pas = rulează scraperul prin GitHub Actions și verifică job-urile în SOLR
+- Ultimul pas = rulează scraperul prin GitHub Actions, verifică job-urile în SOLR, și verifică că `docs/jobs.md` a fost generat și este accesibil pe GitHub Pages
 - Toate workflow-urile din `.github/workflows/` trebuie să treacă înainte de merge
 
 ### 7. Module Structure
-- `src/anaf.js` — core ANAF library (imported by company.js)
+- `src/anaf.js` — core ANAF library (imported by company.js); has retry logic: 3 retries, 2s exponential backoff
+- `src/markdown-generator.js` — generates docs/jobs.md after each scrape; called from index.js
 - `demoanaf.js` — CLI wrapper around src/anaf.js
 - `company.js` — company validation (ANAF + Peviitor + SOLR)
 - `solr.js` — SOLR operations
+- `validate-jobs.js` — standalone job URL validator; checks active/expired, optionally deletes stale jobs
 - `index.js` — main scraper orchestrator
