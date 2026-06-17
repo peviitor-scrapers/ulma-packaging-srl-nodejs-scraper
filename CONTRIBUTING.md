@@ -6,7 +6,10 @@ Thank you for your interest in contributing!
 
 This is the **reference implementation** for Node.js job scrapers in the peviitor.ro ecosystem. New scrapers for other Romanian companies should be derived from this pattern — same structure, same workflows, same testing layers.
 
-> **✅ Validated in production.** The first derived scraper, [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper), follows this exact checklist. Use it as a reference if anything below is unclear.
+> **✅ Validated in production.** Two derived scrapers follow this exact checklist:
+> - [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper) — MEJIX S.R.L. (API JSON)
+> - [talent-matchmakers-srl-nodejs-scraper](https://github.com/sebiboga/talent-matchmakers-srl-nodejs-scraper) — TALENT MATCHMAKERS S.R.L. (Teamtailor HTML/cheerio)
+> Use them as references if anything below is unclear.
 
 ## Deriving a New Scraper for Another Company
 
@@ -47,10 +50,10 @@ When you replace `parseApiJobs()` in `index.js` (EPAM JSON API) with a new parse
 - Update test data fixtures to match the new source format (e.g. HTML fragments instead of EPAM API JSON)
 - Update URL generation tests — the URL construction logic changes per data source
 - Also update `tests/unit/company.test.js`: replace `EPAM_ANAF_RECORD` and all hardcoded `33159615` / `EPAM SYSTEMS INTERNATIONAL SRL` values with the new company's CIF and legal name
-
+- Also update `tests/unit/solr.test.js`: replace all hardcoded `'33159615'`, `'EPAM SYSTEMS INTERNATIONAL SRL'`, and `'EPAM'` in mock data with the new company's CIF, legal name, and brand (tests still pass with stale values since mocks are self-referential, but the hardcoded EPAM references are misleading)
 - **Also update `tests/integration/workflow.test.js`** and **`tests/e2e/scraper.test.js`**: replace the `EPAM_CIF`/`TEST_CIF` constant (`33159615`) with the new CIF, update all hardcoded company name and brand assertions, and replace EPAM API URLs/parsing with the new data source's URL and parser function name
 
-Failing to update these tests will break CI immediately — the unit test step gates all downstream pipeline steps, and integration/E2E tests run next.
+Failing to update these tests will break CI immediately — the unit test step gates all downstream pipeline steps, and integration/E2E tests run next (if they query real SOLR/ANAF data instead of mocks).
 
 ### 3. Adjust the scraper to the new data source
 
