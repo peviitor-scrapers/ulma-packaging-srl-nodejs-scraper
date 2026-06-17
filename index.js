@@ -11,6 +11,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { validateAndGetCompany } from "./company.js";
 import { querySOLR, deleteJobByUrl, upsertJobs, upsertCompany } from "./solr.js";
+import { generateJobsMarkdown } from "./src/markdown-generator.js";
 
 // ============================================================================
 // CONFIGURATION CONSTANTS
@@ -375,6 +376,22 @@ async function main() {
     // Save transformed jobs to file (for debugging/backup)
     fs.writeFileSync("tmp/jobs.json", JSON.stringify(transformedPayload, null, 2), "utf-8");
     console.log("Saved tmp/jobs.json");
+
+    // Generate and save docs/jobs.md
+    const companyData = {
+      id: localCif,
+      company: transformedPayload.company,
+      brand: "EPAM",
+      status: "activ",
+      location: address ? [address] : ["București"],
+      website: ["https://www.epam.com"],
+      career: ["https://careers.epam.com"],
+      lastScraped: new Date().toISOString().split('T')[0]
+    };
+    const markdown = generateJobsMarkdown(companyData, transformedPayload.jobs);
+    fs.mkdirSync("docs", { recursive: true });
+    fs.writeFileSync("docs/jobs.md", markdown, "utf-8");
+    console.log("Saved docs/jobs.md");
 
     // Step 6: Upsert all jobs to Solr (add/update)
     console.log("\n=== Step 4: Upsert jobs to SOLR ===");
