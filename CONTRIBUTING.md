@@ -37,7 +37,18 @@ All scraper code, CI workflows, and the static HTML read from this file. You sho
 | `UPDATE-REPO-ABOUT.md` | New description with legal name and CIF |
 | `package.json` | `name` field |
 | `README.md` | Title, badges (URLs to the new repo), Overview |
-| `tests/validate-epam-jobs.js` | Rename to `validate-<brand>-jobs.js` (optional) |
+| `tests/validate-epam-jobs.js` | Rename to `validate-<brand>-jobs.js` |
+
+**Critical — update test files to match the new scraper's API:**
+
+When you replace `parseApiJobs()` in `index.js` (EPAM JSON API) with a new parser (e.g. `parseHtmlJobs()` for HTML/cheerio), you **must** update `tests/unit/index.test.js` accordingly:
+
+- Replace the `parseApiJobs` test block with tests for the new function
+- Update test data fixtures to match the new source format (e.g. HTML fragments instead of EPAM API JSON)
+- Update URL generation tests — the URL construction logic changes per data source
+- Also update `tests/unit/company.test.js`: replace `EPAM_ANAF_RECORD` and all hardcoded `33159615` / `EPAM SYSTEMS INTERNATIONAL SRL` values with the new company's CIF and legal name
+
+Failing to update these tests will break CI immediately — the unit test step gates all downstream pipeline steps.
 
 ### 3. Adjust the scraper to the new data source
 
