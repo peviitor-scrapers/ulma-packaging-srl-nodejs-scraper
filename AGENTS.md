@@ -4,12 +4,31 @@
 EPAM scraper for peviitor.ro (Node.js, ESM, Jest)
 
 ## 📐 This Repo Is a Template
-This repo is the **reference implementation** for all Node.js scrapers in the peviitor.ro ecosystem. Other scrapers are derived from it. When making changes:
+This repo is the **reference implementation** for all Node.js scrapers in the peviitor.ro ecosystem. Other scrapers are derived from it.
+
+**🤖 If you've been asked to CREATE or RECREATE a derived scraper, read [AI-DERIVATION-GUIDE.md](AI-DERIVATION-GUIDE.md) first.** That file is the consolidated playbook covering every step + all known pitfalls from past derivations.
+
+When making changes to this template:
 - **All company-specific identity lives in `config/company.json`** (CIF, brand, legalName, URLs, API params). Read from `config/company.js` in Node code, or via `jq` in workflows. Never hardcode in source files.
 - **Only the API parsing logic in `index.js`** (`fetchJobsPage`, `parseApiJobs`) is EPAM-specific. The output shape (`mapToJobModel`, `transformJobsForSOLR`) must stay uniform across derived scrapers.
 - **If you add a new file, update [CONTRIBUTING.md](CONTRIBUTING.md)** — the derivation checklist must stay accurate.
 
 ## Critical Rules
+
+### 0. Background tasks — always pass `--repo` explicitly to `gh`
+
+When polling a workflow run with `until [ "$(gh run view ID --json status -q .status)" = "completed" ]; do sleep N; done`, the `gh run view` command implicitly uses the current working directory's git remote. If the CWD is a different repo (e.g. you cd-ed elsewhere mid-task), `gh` looks in the wrong repo and returns 404 — the loop's check becomes `"" != "completed"` (always true) and the background task sleeps forever.
+
+**Always specify the repo explicitly:**
+```bash
+gh run view <RUN_ID> --repo sebiboga/<derived-repo>-nodejs-scraper --json status -q .status
+```
+
+Before starting any `gh run watch` or polling loop in the background, sanity-check:
+- Does the command include `--repo`?
+- Is the run ID from the same repo as `--repo`?
+
+If you spawn a stuck task, kill it immediately rather than letting it hang.
 
 ### 1. Temporary Files
 All temporary/scratch files MUST go in `tmp/` inside the project root.

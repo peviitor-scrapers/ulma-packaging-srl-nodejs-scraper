@@ -5,9 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.4] - 2026-06-18
+## [1.5.0] - 2026-06-18
 
 ### Added
+- `AI-DERIVATION-GUIDE.md` — comprehensive playbook for AI agents deriving a new scraper from this template. Consolidates lessons learned from 4 derivations (MEJIX, Talent Matchmakers, Artsoft, Continental Hotels) including 9 documented pitfalls and references to all source issues.
+- `AGENTS.md` and `CONTRIBUTING.md` now reference the guide so AI agents discover it first.
 - README "Derived Scrapers": added [rapel-srl-nodejs-scraper](https://github.com/sebiboga/rapel-srl-nodejs-scraper) (RAPEL SRL, CIF 5665609, jobRapid.ro HTML)
 - README "Derived Scrapers": documented two new pitfalls discovered during RAPEL derivation (ANAF brand search vs CIF lookup, SOLR `_version_` conflict on re-upsert)
 
