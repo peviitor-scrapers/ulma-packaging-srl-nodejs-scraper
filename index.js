@@ -41,6 +41,53 @@ let COMPANY_NAME = null;
  */
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * Searches ANOFM (Agentia Nationala pentru Ocuparea Fortei de Munca) for
+ * job listings belonging to the given company CIF. Uses the public ANOFM API.
+ * @param {string} cif - Company CIF
+ * @returns {Promise<Array>} - Array of job objects { url, title, location, source }
+ */
+async function searchANOFM(cif) {
+  const jobs = [];
+  try {
+    console.log(`Searching ANOFM by CIF: ${cif}`);
+    const payload = {
+      current: 1,
+      rowCount: 250,
+      sort: { created_at: "desc" },
+      employer_tax_code: cif
+    };
+    const res = await fetch("https://mediere.anofm.ro/api/entity/vw_public_job_posting", {
+      method: "POST",
+      timeout: TIMEOUT,
+      headers: {
+        "Content-Type": "application/json",
+        "User-Agent": "job_seeker_ro_spider"
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      console.log(`  ANOFM returned ${res.status}`);
+      return jobs;
+    }
+    const data = await res.json();
+    for (const row of data.rows || []) {
+      const locationParts = (row.address_locality_name || '').split('>').map(s => s.trim());
+      const location = locationParts.length > 1 ? locationParts[locationParts.length - 1] : locationParts[0];
+      jobs.push({
+        url: `https://mediere.anofm.ro/app/module/mediere/job/${row.id}`,
+        title: row.occupation,
+        location: location || undefined,
+        source: "ANOFM"
+      });
+    }
+    console.log(`  Found ${jobs.length} jobs on ANOFM`);
+  } catch (err) {
+    console.log(`  ANOFM error: ${err.message}`);
+  }
+  return jobs;
+}
+
 // ============================================================================
 // API FUNCTIONS - Fetching data from EPAM Careers
 // ============================================================================
@@ -350,6 +397,18 @@ async function main() {
     const rawJobs = await scrapeAllListings(testOnlyOnePage);
     const scrapedCount = rawJobs.length;
     console.log(`📊 Jobs scraped from EPAM Careers website: ${scrapedCount}`);
+
+    // Step 3b: Also scrape ANOFM jobs for this CIF
+    if (!testOnlyOnePage) {
+      const anofmJobs = await searchANOFM(localCif);
+      const anofmCount = anofmJobs.length;
+      for (const job of anofmJobs) {
+        if (!rawJobs.find(j => j.url === job.url)) {
+          rawJobs.push(job);
+        }
+      }
+      console.log(`📊 Jobs added from ANOFM: ${anofmCount}`);
+    }
 
     // Step 4: Map raw jobs to Solr model with CIF and company name
     const jobs = rawJobs.map(job => mapToJobModel(job, localCif));

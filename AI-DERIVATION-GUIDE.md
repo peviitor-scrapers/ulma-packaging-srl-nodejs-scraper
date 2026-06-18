@@ -429,6 +429,31 @@ function addCifToExistingJobs(existingJobs, cif, companyName) {
 }
 ```
 
+### Pitfall #12 — ANOFM jobs are silently lost after delete-by-CIF crash (issue #2 RAPEL)
+
+ANOFM (Agentia Nationala pentru Ocuparea Fortei de Munca) hosts free job listings for Romanian companies. Many companies post jobs there. The public API at `/api/entity/vw_public_job_posting` accepts a POST with `employer_tax_code` filter (the company's CIF):
+
+```js
+const payload = {
+  current: 1,
+  rowCount: 250,
+  sort: { created_at: "desc" },
+  employer_tax_code: cif  // <-- filters by company CIF
+};
+```
+
+Each result includes `occupation` (title), `address_locality_name` (location in "County > City > Locality" format), and `id` (used to build the job URL as `https://mediere.anofm.ro/app/module/mediere/job/{id}`).
+
+**Lesson:** Always include ANOFM scraping in the template. ANOFM data is free, public, and contains jobs that may not appear on other portals. The `searchANOFM(cif)` function should be called from `searchAllPortals` (RAPEL pattern) or the main scrape flow (EPAM pattern), and its results merged with other portal results to avoid data loss.
+
+**ANOFM API fields used:**
+| Field | Description |
+|-------|-------------|
+| `employer_tax_code` | Filter by CIF |
+| `id` | Job ID → URL: `/app/module/mediere/job/{id}` |
+| `occupation` | Job title |
+| `address_locality_name` | Location in `County > City > Locality` format |
+
 ---
 
 ## 13. Issue tracking rule
@@ -473,6 +498,10 @@ This guide is a synthesis. The underlying source-of-truth issues are:
 - [#6](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/6) — lastScraped format drift
 - [#7](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/7) — E2E timeout from Azure
 - [#9](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/9) — CIF format regex
+
+### RAPEL SRL (issue #1, #2)
+- [#1](https://github.com/sebiboga/rapel-srl-nodejs-scraper/issues/1) — SOLR `_version_` 409 on re-upsert (Pitfall #11)
+- [#2](https://github.com/sebiboga/rapel-srl-nodejs-scraper/issues/2) — ANOFM job scraping by CIF (Pitfall #12)
 
 ---
 
