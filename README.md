@@ -18,7 +18,7 @@
 > **📐 Template repository.** Acest repo este **referința** pentru toate scraper-ele Node.js din ecosistemul peviitor.ro. Toate scraper-ele noi pentru alte companii din România ar trebui derivate din acest pattern. Vezi [CONTRIBUTING.md](CONTRIBUTING.md) pentru pașii de derivare.
 >
 > **✅ Derivate validate:**
-> - [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper) — MEJIX S.R.L. (API JSON)
+> - [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper) — MEJIX S.R.L. (HTML/cheerio, single-page)
 > - [talent-matchmakers-srl-nodejs-scraper](https://github.com/sebiboga/talent-matchmakers-srl-nodejs-scraper) — TALENT MATCHMAKERS S.R.L. (Teamtailor HTML/cheerio)
 > - [artsoft-consult-srl-nodejs-scraper](https://github.com/sebiboga/artsoft-consult-srl-nodejs-scraper) — ARTSOFT CONSULT SRL (HTML scraping/cheerio)
 
