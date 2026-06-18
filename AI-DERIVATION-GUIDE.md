@@ -411,6 +411,24 @@ GitHub Pages serves this deceptive `docs/jobs.md` until the first real scrape re
 
 **Mitigation:** `rm -f docs/jobs.md` early in the derivation (see Section 4.3). It is regenerated on first scrape.
 
+### Pitfall #11 — SOLR `_version_` causes 409 on re-upsert (issue #1 RAPEL)
+
+When `index.js` queries existing jobs from SOLR (Step 2), the returned docs include a `_version_` field. The `addCifToExistingJobs` function spreads each job with `{ ...job }`, which copies `_version_`. After `deleteJobsByCIF` removes all docs for that CIF (Step 5), the subsequent `upsertJobs` call (Step 6) sends the old `_version_` values — SOLR rejects them with a 409 "version conflict" because the documents no longer exist (actual=-1).
+
+**Fix:** Strip `_version_` from existing jobs before re-upserting:
+
+```js
+function addCifToExistingJobs(existingJobs, cif, companyName) {
+  return existingJobs.map(job => {
+    const updated = { ...job };
+    delete updated._version_; // <-- critical: drop SOLR's version field
+    updated.cif = cif;
+    // ...
+    return updated;
+  });
+}
+```
+
 ---
 
 ## 13. Issue tracking rule
@@ -431,6 +449,7 @@ When the fix is template-wide (would benefit ALL derived scrapers), file in EPAM
 | [artsoft-consult-srl-nodejs-scraper](https://github.com/sebiboga/artsoft-consult-srl-nodejs-scraper) | HTML/cheerio | 15997630 | — | — |
 | [continental-hotels-srl-nodejs-scraper](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper) | POST AJAX → HTML | 1559737 (7 digits!) | First SA (not SRL), exposed CIF regex bug | [#5](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/5), [#6](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/6), [#7](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/7), [#9](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/9) |
 | [coera-bc-srl-nodejs-scraper](https://github.com/sebiboga/coera-bc-srl-nodejs-scraper) | HTML/cheerio | 32519996 | First derivation following AI-DERIVATION-GUIDE end-to-end (zero CI surprises). Title-suffix city extraction pattern (`"Title \| City1 & City2"`). | — |
+| [rapel-srl-nodejs-scraper](https://github.com/sebiboga/rapel-srl-nodejs-scraper) | jobRapid.ro HTML | 5665609 | jobRapid.ro multi-page, SOLR `_version_` conflict found & fixed | [#1](https://github.com/sebiboga/rapel-srl-nodejs-scraper/issues/1) |
 
 Read the linked Continental issues — they are the most detailed real-world record of pitfalls.
 
