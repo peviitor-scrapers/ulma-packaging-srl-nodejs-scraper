@@ -135,15 +135,20 @@ Only **two functions** should be company-specific: `fetchJobs*()` and `parse*Job
 
 **Probe the endpoint first** with `curl` to see what params are required. Continental's old scraper failed because it omitted `id_lang` — a single missing form param made the endpoint return PHP warnings instead of jobs.
 
-### 4.3 Delete stale ANAF cache
+### 4.3 Delete stale ANAF cache + stale published jobs.md
 
-The template ships with `company.json` at the root — this is EPAM's ANAF cache. If you don't delete it, the first scrape will use EPAM's identity from cache:
+The template ships with two stale artefacts that MUST be deleted before bulk sed runs:
 
 ```bash
-rm -f company.json
+rm -f company.json           # template's ANAF cache (EPAM identity)
+rm -f docs/jobs.md           # template's last scraped EPAM jobs list (71+ entries)
 ```
 
-The new ANAF data for the derived company will be fetched and cached on first run.
+**Why this matters (Pitfall #10):**
+- `company.json` (root): the caching logic in `company.js` will read it first and skip ANAF for the derived company → first scrape uses EPAM identity.
+- `docs/jobs.md`: contains the template company's last scraped jobs. Bulk sed will rewrite `careers.epam.com → <your domain>` in URLs, producing fake but plausible-looking URLs (e.g. `https://www.co-era.com/en/vacancy/senior-sap-fico-consultant-blt4lismih6xo9i26pk_en` — domain correct, path is an EPAM-only vacancy ID). The GitHub Pages dashboard serves this deceptive content until the first scrape regenerates `docs/jobs.md`. The user sees "71 jobs" while SOLR has 2, and assumes the scraper is broken.
+
+Both files are regenerated automatically on the first scrape.
 
 ---
 
@@ -395,6 +400,16 @@ If the existing repo was created by `gh repo create` without `--template`, the b
 ### Pitfall #9 — Forgot to update the EPAM template's "Derived Scrapers" list (issue #1 Continental)
 
 This is the last manual step and easy to miss. Set a reminder.
+
+### Pitfall #10 — Stale `docs/jobs.md` from template gets sed-mangled into fake URLs (issue #39 EPAM)
+
+The template's `docs/jobs.md` contains the template company's last scraped jobs (e.g. 71 EPAM jobs). Bulk sed rewrites brand strings but keeps vacancy paths/IDs, producing URLs like:
+- `https://www.co-era.com/en/vacancy/senior-sap-fico-consultant-blt4lismih6xo9i26pk_en` ← domain correct, path is an EPAM-only vacancy ID
+- Company info table shows EPAM's HQ address (`IANCU DE HUNEDOARA, 48, Bucureşti`) instead of the derived company's
+
+GitHub Pages serves this deceptive `docs/jobs.md` until the first real scrape regenerates it. The user sees "71 jobs" while SOLR has 2 (or whatever the real count is) and assumes the scraper is broken.
+
+**Mitigation:** `rm -f docs/jobs.md` early in the derivation (see Section 4.3). It is regenerated on first scrape.
 
 ---
 
