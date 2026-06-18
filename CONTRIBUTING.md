@@ -13,6 +13,11 @@ This is the **reference implementation** for Node.js job scrapers in the peviito
 
 ## Deriving a New Scraper for Another Company
 
+> **🤖 AI agents:** the comprehensive playbook for derivation (every step + all known pitfalls from past derivations) is in [AI-DERIVATION-GUIDE.md](AI-DERIVATION-GUIDE.md). Read it before starting.
+
+The summary below is for human contributors.
+
+
 Use this checklist when starting a scraper for `<COMPANY>`:
 
 ### 1. Bootstrap the repository

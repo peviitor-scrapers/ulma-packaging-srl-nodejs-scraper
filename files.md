@@ -52,6 +52,7 @@
 | `company-model.md` | Company schema definition (Peviitor Core) - fields, types, validation rules |
 | `files.md` | This file - documents role of each project file |
 | `AGENTS.md` | Rules for AI agents working on this project |
+| `AI-DERIVATION-GUIDE.md` | **Comprehensive playbook for AI agents deriving a new scraper from this template.** Consolidates all lessons learned from past derivations (MEJIX, Talent Matchmakers, Artsoft, Continental Hotels). Step-by-step + every known pitfall. AI agents should read this BEFORE starting a derivation. |
 | `BRANCH.md` | Branch strategy and naming conventions |
 | `CHANGELOG.md` | Version history and notable changes |
 | `CONTRIBUTING.md` | Contribution guidelines |

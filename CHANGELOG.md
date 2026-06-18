@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-06-18
+
+### Added
+- `AI-DERIVATION-GUIDE.md` — comprehensive playbook for AI agents deriving a new scraper from this template. Consolidates lessons learned from 4 derivations (MEJIX, Talent Matchmakers, Artsoft, Continental Hotels) including 9 documented pitfalls and references to all source issues.
+- `AGENTS.md` and `CONTRIBUTING.md` now reference the guide so AI agents discover it first.
+
 ## [1.4.3] - 2026-06-17
 
 ### Added
