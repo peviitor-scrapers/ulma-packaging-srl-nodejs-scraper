@@ -415,6 +415,7 @@ When the fix is template-wide (would benefit ALL derived scrapers), file in EPAM
 | [talent-matchmakers-srl-nodejs-scraper](https://github.com/sebiboga/talent-matchmakers-srl-nodejs-scraper) | Teamtailor HTML | 38460545 | — | — |
 | [artsoft-consult-srl-nodejs-scraper](https://github.com/sebiboga/artsoft-consult-srl-nodejs-scraper) | HTML/cheerio | 15997630 | — | — |
 | [continental-hotels-srl-nodejs-scraper](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper) | POST AJAX → HTML | 1559737 (7 digits!) | First SA (not SRL), exposed CIF regex bug | [#5](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/5), [#6](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/6), [#7](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/7), [#9](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper/issues/9) |
+| [coera-bc-srl-nodejs-scraper](https://github.com/sebiboga/coera-bc-srl-nodejs-scraper) | HTML/cheerio | 32519996 | First derivation following AI-DERIVATION-GUIDE end-to-end (zero CI surprises). Title-suffix city extraction pattern (`"Title \| City1 & City2"`). | — |
 
 Read the linked Continental issues — they are the most detailed real-world record of pitfalls.
 
