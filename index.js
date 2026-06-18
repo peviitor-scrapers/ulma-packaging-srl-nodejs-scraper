@@ -77,7 +77,7 @@ async function searchANOFM(cif) {
       jobs.push({
         url: `https://mediere.anofm.ro/app/module/mediere/job/${row.id}`,
         title: row.occupation,
-        location: location || undefined,
+        location: location ? [location] : undefined,
         source: "ANOFM"
       });
     }
