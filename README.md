@@ -168,11 +168,14 @@ Acest template a fost folosit cu succes pentru a deriva scraper-e pentru alte co
 | [mejix-srl-nodejs-scraper](https://github.com/sebiboga/mejix-srl-nodejs-scraper) | MEJIX SRL | 17372688 | HTML scraping (cheerio) | ✅ Live |
 | [talent-matchmakers-srl-nodejs-scraper](https://github.com/sebiboga/talent-matchmakers-srl-nodejs-scraper) | TALENT MATCHMAKERS S.R.L. | 38460545 | Teamtailor HTML (cheerio) | ✅ Live |
 | [artsoft-consult-srl-nodejs-scraper](https://github.com/sebiboga/artsoft-consult-srl-nodejs-scraper) | ARTSOFT CONSULT SRL | 15997630 | HTML scraping (cheerio) | ✅ Live |
+| [rapel-srl-nodejs-scraper](https://github.com/sebiboga/rapel-srl-nodejs-scraper) | RAPEL SRL | 5665609 | jobRapid.ro HTML (cheerio) | ✅ Live |
 
 **Învățăminte din derivări:**
 - Doar un singur fișier de editat pentru identitate: `config/company.json` ✅
-- Logica de scraping în `index.js` poate fi complet diferită (API vs HTML/Teamtailor) fără să afecteze restul pipeline-ului
-- Toate cele 4 niveluri de teste (unit, integration, e2e, consistency) și workflow-urile CI au funcționat pe ambele derivate fără ajustări structurale
+- Logica de scraping în `index.js` poate fi complet diferită (API vs HTML/Teamtailor/jobRapid.ro) fără să afecteze restul pipeline-ului
+- Toate cele 4 niveluri de teste (unit, integration, e2e, consistency) și workflow-urile CI au funcționat pe toate derivatele fără ajustări structurale
+- **Pitfall #1 — ANAF brand search:** Căutarea ANAF după brand poate returna firme omonime diferite înaintea celei căutate. Testele trebuie să interogheze direct pe CIF, nu după nume.
+- **Pitfall #2 — Version conflict la re-upsert:** Joburile citite din SOLR păstrează `_version_`; după delete-by-CIF, re-insertul eșuează cu 409. Se șterge `_version_` din obiecte înainte de upsert.
 
 Pentru a deriva un scraper nou, urmează [CONTRIBUTING.md](CONTRIBUTING.md).
 

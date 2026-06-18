@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.4] - 2026-06-18
+
+### Added
+- README "Derived Scrapers": added [rapel-srl-nodejs-scraper](https://github.com/sebiboga/rapel-srl-nodejs-scraper) (RAPEL SRL, CIF 5665609, jobRapid.ro HTML)
+- README "Derived Scrapers": documented two new pitfalls discovered during RAPEL derivation (ANAF brand search vs CIF lookup, SOLR `_version_` conflict on re-upsert)
+
 ## [1.4.3] - 2026-06-17
 
 ### Added
