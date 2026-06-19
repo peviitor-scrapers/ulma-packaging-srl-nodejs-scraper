@@ -211,6 +211,14 @@ Acest scraper respectă regulile din [robots.txt](https://careers.epam.com/robot
 - Endpoint-urile permise (`/`, `/en/jobs`) nu sunt scraper-uite
 - Comportament: 1 cerere/10 job-uri, delay 1s între pagini, fără concurență
 
+## Derived Repositories
+
+This project serves as the **template** for the following derived company-specific scrapers, created by modifying only `config/company.json`:
+
+| Company | Repository | Status |
+|---------|-----------|--------|
+| SENNDER BUCHAREST S.R.L. | [sebiboga/sennder-bucharest-srl-nodejs-scraper](https://github.com/sebiboga/sennder-bucharest-srl-nodejs-scraper) | Active |
+
 ## Disclaimer
 
 This scraper is designed for educational purposes and legitimate job data aggregation for the Romanian job market. Please respect EPAM's Terms of Service and robots.txt when using this scraper.
