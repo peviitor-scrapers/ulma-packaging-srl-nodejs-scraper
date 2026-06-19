@@ -174,6 +174,7 @@ Acest template a fost folosit cu succes pentru a deriva scraper-e pentru alte co
 | [rapel-srl-nodejs-scraper](https://github.com/sebiboga/rapel-srl-nodejs-scraper) | RAPEL SRL | 5665609 | jobRapid.ro HTML (cheerio) | ✅ Live |
 | [continental-hotels-srl-nodejs-scraper](https://github.com/sebiboga/continental-hotels-srl-nodejs-scraper) | CONTINENTAL HOTELS SA | 1559737 | POST AJAX → HTML (cheerio) | ✅ Live |
 | [coera-bc-srl-nodejs-scraper](https://github.com/sebiboga/coera-bc-srl-nodejs-scraper) | COERA BC SRL | 32519996 | HTML scraping (cheerio) | ✅ Live |
+| [sennder-bucharest-srl-nodejs-scraper](https://github.com/sebiboga/sennder-bucharest-srl-nodejs-scraper) | SENNDER BUCHAREST S.R.L. | 45780151 | Gem ATS API (JSON fetch) | ✅ Live |
 
 **Învățăminte din derivări:**
 - Doar un singur fișier de editat pentru identitate: `config/company.json` ✅
@@ -210,14 +211,6 @@ Acest scraper respectă regulile din [robots.txt](https://careers.epam.com/robot
 - Paginile individuale de job (`/*/vacancy/*`) sunt `Disallow` — scraper-ul NU le parsează, doar le verifică accesibilitatea via HEAD request
 - Endpoint-urile permise (`/`, `/en/jobs`) nu sunt scraper-uite
 - Comportament: 1 cerere/10 job-uri, delay 1s între pagini, fără concurență
-
-## Derived Repositories
-
-This project serves as the **template** for the following derived company-specific scrapers, created by modifying only `config/company.json`:
-
-| Company | Repository | Status |
-|---------|-----------|--------|
-| SENNDER BUCHAREST S.R.L. | [sebiboga/sennder-bucharest-srl-nodejs-scraper](https://github.com/sebiboga/sennder-bucharest-srl-nodejs-scraper) | Active |
 
 ## Disclaimer
 
