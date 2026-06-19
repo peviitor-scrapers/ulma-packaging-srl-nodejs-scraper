@@ -10,11 +10,11 @@
 | Location | IANCU DE HUNEDOARA, 48, Bucureşti Sectorul 1, Bucureşti |
 | Website | [https://www.epam.com](https://www.epam.com) |
 | Careers | [https://careers.epam.com](https://careers.epam.com) |
-| Last Scraped | 2026-06-17 |
+| Last Scraped | 2026-06-19 |
 
-## Current Job Listings (71)
+## Current Job Listings (75)
 
-_Generated: 2026-06-17T13:41:21.692Z_
+_Generated: 2026-06-19T10:19:31.964Z_
 
 ### Senior Full Stack ABAP/UI5 Developer
 
@@ -224,6 +224,14 @@ _Generated: 2026-06-17T13:41:21.692Z_
 - **Tags:** sap logistics (scm), sap vim, coupa - procurement
 - **Status:** scraped
 
+### Applied AI Product Manager (Forward Deployed)
+
+- **URL:** [https://careers.epam.com/en/vacancy/applied-ai-product-manager-forward-deployed-blt923qktb6pvhyusyw_en](https://careers.epam.com/en/vacancy/applied-ai-product-manager-forward-deployed-blt923qktb6pvhyusyw_en)
+- **Work Mode:** remote
+- **Location:** România
+- **Tags:** product management
+- **Status:** scraped
+
 ### Senior/Lead SAP OpenText VIM Consultant
 
 - **URL:** [https://careers.epam.com/en/vacancy/senior-lead-sap-opentext-vim-consultant-blt99e25310c2dc79a9_en](https://careers.epam.com/en/vacancy/senior-lead-sap-opentext-vim-consultant-blt99e25310c2dc79a9_en)
@@ -424,6 +432,14 @@ _Generated: 2026-06-17T13:41:21.692Z_
 - **Tags:** sap fico, ifrs, sap-fi: basic fi, sap-refx: measurements, atlassian jira, servicenow
 - **Status:** scraped
 
+### SAP Basis Architect
+
+- **URL:** [https://careers.epam.com/en/vacancy/sap-basis-architect-bltnwmzd9806o5gn8li_en](https://careers.epam.com/en/vacancy/sap-basis-architect-bltnwmzd9806o5gn8li_en)
+- **Work Mode:** remote
+- **Location:** România
+- **Tags:** solution architecture, amazon web services
+- **Status:** scraped
+
 ### Senior Automation Tester in Java
 
 - **URL:** [https://careers.epam.com/en/vacancy/senior-automation-tester-in-java-bltopaeb6k18qe4fztm_en](https://careers.epam.com/en/vacancy/senior-automation-tester-in-java-bltopaeb6k18qe4fztm_en)
@@ -560,6 +576,14 @@ _Generated: 2026-06-17T13:41:21.692Z_
 - **Tags:** microsoft 365 engineering, active directory, azure virtual desktop, devsecops, microsoft 365, microsoft intune, agile
 - **Status:** scraped
 
+### SAP BTP Architect
+
+- **URL:** [https://careers.epam.com/en/vacancy/sap-btp-architect-bltw8oknzrq5vhdcnl5_en](https://careers.epam.com/en/vacancy/sap-btp-architect-bltw8oknzrq5vhdcnl5_en)
+- **Work Mode:** remote
+- **Location:** România
+- **Tags:** solution architecture, amazon web services
+- **Status:** scraped
+
 ### Lead Automation Tester in Python
 
 - **URL:** [https://careers.epam.com/en/vacancy/lead-automation-tester-in-python-bltypx3t0jqz34cgp0f_en](https://careers.epam.com/en/vacancy/lead-automation-tester-in-python-bltypx3t0jqz34cgp0f_en)
@@ -582,4 +606,10 @@ _Generated: 2026-06-17T13:41:21.692Z_
 - **Work Mode:** hybrid
 - **Location:** România
 - **Tags:** sap sapui5, data science
+- **Status:** scraped
+
+### INGINER DE SISTEM SOFTWARE
+
+- **URL:** [https://mediere.anofm.ro/app/module/mediere/job/3276193](https://mediere.anofm.ro/app/module/mediere/job/3276193)
+- **Location:** România
 - **Status:** scraped
