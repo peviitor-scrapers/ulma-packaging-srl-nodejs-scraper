@@ -10,11 +10,11 @@
 | Location | IANCU DE HUNEDOARA, 48, Bucureşti Sectorul 1, Bucureşti |
 | Website | [https://www.epam.com](https://www.epam.com) |
 | Careers | [https://careers.epam.com](https://careers.epam.com) |
-| Last Scraped | 2026-06-19 |
+| Last Scraped | 2026-06-20 |
 
-## Current Job Listings (75)
+## Current Job Listings (76)
 
-_Generated: 2026-06-19T10:19:31.964Z_
+_Generated: 2026-06-20T08:47:49.779Z_
 
 ### Senior Full Stack ABAP/UI5 Developer
 
@@ -54,6 +54,14 @@ _Generated: 2026-06-19T10:19:31.964Z_
 - **Work Mode:** hybrid
 - **Location:** România
 - **Tags:** data analytics and visualization, bi analysis, data management, data privacy, microsoft power bi, power bi platform administration, sql, life reinsurance, power bi architecture, sap bo, salesforce tableau
+- **Status:** scraped
+
+### SAP S/4HANA Public Cloud Solution Architect
+
+- **URL:** [https://careers.epam.com/en/vacancy/sap-s-4hana-public-cloud-solution-architect-blt142nxzezv5d1k24r_en](https://careers.epam.com/en/vacancy/sap-s-4hana-public-cloud-solution-architect-blt142nxzezv5d1k24r_en)
+- **Work Mode:** remote
+- **Location:** România
+- **Tags:** solution architecture, sap
 - **Status:** scraped
 
 ### Senior AI Engineer
