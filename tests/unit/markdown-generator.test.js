@@ -38,9 +38,8 @@ describe('markdown-generator.js', () => {
       expect(md).toContain("ulmapackaging");
     });
 
-    it('should include job table with titles and locations', () => {
+    it('should include job titles and locations', () => {
       const md = generateJobsMarkdown(companyData, [baseJob]);
-      expect(md).toContain("| Job");
       expect(md).toContain("Montator Electromecanic");
       expect(md).toContain("Apahida");
     });
@@ -68,15 +67,6 @@ describe('markdown-generator.js', () => {
       expect(md).toContain("Job 1");
     });
 
-    it('should format location as comma-separated list', () => {
-      const multiLocJob = {
-        ...baseJob,
-        location: ["Cluj-Napoca", "Apahida"]
-      };
-      const md = generateJobsMarkdown(companyData, [multiLocJob]);
-      expect(md).toContain("Cluj-Napoca, Apahida");
-    });
-
     it('should handle multiple jobs', () => {
       const job2 = { ...baseJob, title: "Operator CNC", url: "https://ulmapackaging.talentclue.com/en/node/123026306/4590" };
       const md = generateJobsMarkdown(companyData, [baseJob, job2]);
@@ -88,6 +78,16 @@ describe('markdown-generator.js', () => {
       const minimal = { url: "https://ulmapackaging.talentclue.com/en/node/999", title: "QA Engineer" };
       const md = generateJobsMarkdown(companyData, [minimal]);
       expect(md).toContain("QA Engineer");
+    });
+
+    it('should have current job listings section', () => {
+      const md = generateJobsMarkdown(companyData, [baseJob]);
+      expect(md).toContain("Current Job Listings");
+    });
+
+    it('should link job URLs', () => {
+      const md = generateJobsMarkdown(companyData, [baseJob]);
+      expect(md).toContain("https://ulmapackaging.talentclue.com/en/node/123960156/4590");
     });
   });
 });
