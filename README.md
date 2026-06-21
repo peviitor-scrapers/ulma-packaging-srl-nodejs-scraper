@@ -181,6 +181,7 @@ Acest template a fost folosit cu succes pentru a deriva scraper-e pentru alte co
 | [ropardo-srl-nodejs-scraper](https://github.com/sebiboga/ropardo-srl-nodejs-scraper) | ROPARDO SRL | 5415866 | WordPress HTML (cheerio) | ✅ Live |
 | [gaminvest-srl-nodejs-scraper](https://github.com/sebiboga/gaminvest-srl-nodejs-scraper) | GAMINVEST SRL | 21913994 | HTML scraping (cheerio) | ✅ Live |
 | [tec-software-solutions-srl-nodejs-scraper](https://github.com/sebiboga/tec-software-solutions-srl-nodejs-scraper) | TEC SOFTWARE SOLUTIONS SRL | 32971419 | BambooHR API (JSON fetch) | ✅ Live |
+| [utilben-srl-nodejs-scraper](https://github.com/sebiboga/utilben-srl-nodejs-scraper) | UTILBEN SRL | 18643343 | eJobs.ro HTML (cheerio) + ANOFM API | ✅ Live |
 
 **Învățăminte din derivări:**
 - Doar un singur fișier de editat pentru identitate: `config/company.json` ✅
