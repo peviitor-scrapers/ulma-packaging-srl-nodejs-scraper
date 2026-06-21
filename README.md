@@ -26,6 +26,7 @@
 > - [rapel-srl-nodejs-scraper](https://github.com/sebiboga/rapel-srl-nodejs-scraper) — RAPEL SRL (jobRapid.ro HTML/cheerio + ANOFM API)
 > - [ropardo-srl-nodejs-scraper](https://github.com/sebiboga/ropardo-srl-nodejs-scraper) — ROPARDO SRL (WordPress HTML/cheerio)
 > - [gaminvest-srl-nodejs-scraper](https://github.com/sebiboga/gaminvest-srl-nodejs-scraper) — GAMINVEST SRL (HTML/cheerio, single-page)
+> - [tec-software-solutions-srl-nodejs-scraper](https://github.com/sebiboga/tec-software-solutions-srl-nodejs-scraper) — TEC SOFTWARE SOLUTIONS SRL (BambooHR API)
 
 ## Overview
 
@@ -179,6 +180,7 @@ Acest template a fost folosit cu succes pentru a deriva scraper-e pentru alte co
 | [sennder-bucharest-srl-nodejs-scraper](https://github.com/sebiboga/sennder-bucharest-srl-nodejs-scraper) | SENNDER BUCHAREST S.R.L. | 45780151 | Gem ATS API (JSON fetch) | ✅ Live |
 | [ropardo-srl-nodejs-scraper](https://github.com/sebiboga/ropardo-srl-nodejs-scraper) | ROPARDO SRL | 5415866 | WordPress HTML (cheerio) | ✅ Live |
 | [gaminvest-srl-nodejs-scraper](https://github.com/sebiboga/gaminvest-srl-nodejs-scraper) | GAMINVEST SRL | 21913994 | HTML scraping (cheerio) | ✅ Live |
+| [tec-software-solutions-srl-nodejs-scraper](https://github.com/sebiboga/tec-software-solutions-srl-nodejs-scraper) | TEC SOFTWARE SOLUTIONS SRL | 32971419 | BambooHR API (JSON fetch) | ✅ Live |
 
 **Învățăminte din derivări:**
 - Doar un singur fișier de editat pentru identitate: `config/company.json` ✅
