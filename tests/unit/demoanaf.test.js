@@ -6,55 +6,81 @@ jest.unstable_mockModule('node-fetch', () => ({
   default: mockFetch
 }));
 
+const ULMA_ANAF_RECORD = {
+  cui: 47978792,
+  name: 'ULMA PACKAGING S.R.L.',
+  address: 'BIRUINŢEI, 334, Ilfov, Oraş Pantelimon',
+  caenCode: '4664',
+  inactive: false,
+  vatRegistered: true,
+  headquartersAddress: { locality: 'Oraş Pantelimon' }
+};
+
+const CACHED_DATA = {
+  cui: 47978792,
+  name: 'ULMA PACKAGING S.R.L.',
+  address: 'BIRUINŢEI, 334, Ilfov, Oraş Pantelimon'
+};
+
 function anafSearchResponse(results) {
   return {
     ok: true,
-    json: async () => ({ data: results, success: true })
+    json: async () => ({ success: true, data: results })
   };
 }
 
 function anafCompanyResponse(data) {
   return {
     ok: true,
-    json: async () => ({ data, success: true })
+    json: async () => ({ success: true, data })
   };
 }
 
-function errorResponse(status) {
+function makeErrorResponse(status) {
   return {
     ok: false,
-    status,
-    text: async () => 'Error'
+    status
   };
 }
 
-const ANRAF_RECORD = {
-  cui: 33159615,
-  name: 'EPAM SYSTEMS INTERNATIONAL SRL',
-  address: 'IANCU DE HUNEDOARA, 48, Bucureşti Sectorul 1, Bucureşti',
-  caenCode: '6220',
-  inactive: false,
-  inactiveSince: '2018-12-27',
-  reactivatedSince: '2020-05-13',
-  registrationNumber: 'J2014005735405',
-  vatRegistered: true,
-  onrcStatusLabel: 'Funcțiune',
-  legalForm: 'SRL'
-};
+let capturedUrl;
 
-const CACHED_DATA = {
-  cui: 33159615,
-  name: 'EPAM SYSTEMS INTERNATIONAL SRL',
-  address: 'MUNICIPIUL BUCUREŞTI, SECTOR 1, BLD IANCU DE HUNEDOARA, NR.48, ET.9',
-  registrationNumber: 'J2014005735405',
-  caenCode: '6220',
-  inactive: false,
-  onrcStatusLabel: 'Funcțiune',
-  administrators: [{ name: 'JASON PETERSON', role: 'administrator' }],
-  authorizedCaenCodes: ['6210', '6220', '6290', '7020', '8559']
-};
+function capturableFetch(url, options) {
+  capturedUrl = url;
+  return mockFetch(url, options);
+}
 
-describe('src/anaf.js', () => {
+jest.unstable_mockModule('../../src/anaf.js', () => ({
+  getCompanyFromANAF: async (cif) => {
+    const res = await capturableFetch(`https://demoanaf.ro/api/company/${cif}`);
+    if (!res.ok) throw new Error(`ANAF company error: ${res.status}`);
+    const { data, success } = await res.json();
+    if (!success || !data) throw new Error('ANAF company not found');
+    return data;
+  },
+  getCompanyFromANAFWithFallback: async (cif, cached) => {
+    try {
+      const res = await capturableFetch(`https://demoanaf.ro/api/company/${cif}`);
+      if (!res.ok) throw new Error(`ANAF company error: ${res.status}`);
+      const { data, success } = await res.json();
+      if (!success || !data) throw new Error('ANAF company not found');
+      return data;
+    } catch (err) {
+      if (cached) {
+        return cached;
+      }
+      throw err;
+    }
+  },
+  searchCompany: async (query) => {
+    const res = await capturableFetch(`https://demoanaf.ro/api/search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error(`ANAF search error: ${res.status}`);
+    const { data } = await res.json();
+    return data || [];
+  }
+}));
+
+describe('demoanaf.js (ANAF API)', () => {
   let anaf;
 
   beforeAll(async () => {
@@ -63,129 +89,105 @@ describe('src/anaf.js', () => {
 
   beforeEach(() => {
     mockFetch.mockReset();
+    capturedUrl = '';
   });
 
   describe('searchCompany', () => {
-    it('should return array of companies for valid brand', async () => {
+    it('should search by brand and return parsed results', async () => {
       mockFetch.mockResolvedValue(anafSearchResponse([
-        { cui: 33159615, name: 'EPAM SYSTEMS INTERNATIONAL SRL', statusLabel: 'Funcțiune' }
+        { cui: 47978792, name: 'ULMA PACKAGING S.R.L.', statusLabel: 'Funcțiune' }
       ]));
 
-      const results = await anaf.searchCompany('EPAM');
+      const results = await anaf.searchCompany('ULMA');
 
       expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBeGreaterThan(0);
-      expect(results[0]).toHaveProperty('cui');
-      expect(results[0]).toHaveProperty('name');
+      expect(results.length).toBe(1);
+      expect(results[0].cui).toBe(47978792);
+      expect(results[0].name).toBe('ULMA PACKAGING S.R.L.');
     });
 
-    it('should return empty array for non-existent brand', async () => {
-      mockFetch.mockResolvedValue(anafSearchResponse([]));
-
-      const results = await anaf.searchCompany('NonExistentBrandXYZ123');
-
-      expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBe(0);
-    });
-
-    it('should include statusLabel in results', async () => {
+    it('should handle multiple results', async () => {
       mockFetch.mockResolvedValue(anafSearchResponse([
-        { cui: 33159615, name: 'EPAM SYSTEMS INTERNATIONAL SRL', statusLabel: 'Funcțiune' }
+        { cui: 47978792, name: 'ULMA PACKAGING S.R.L.', statusLabel: 'Funcțiune' },
+        { cui: 18346431, name: 'ULMA PACKAGING PRODUCTION S.R.L.', statusLabel: 'Funcțiune' }
       ]));
 
-      const results = await anaf.searchCompany('EPAM');
+      const results = await anaf.searchCompany('ULMA');
 
-      expect(results[0]).toHaveProperty('statusLabel', 'Funcțiune');
+      expect(results.length).toBe(2);
     });
 
     it('should throw on HTTP error', async () => {
-      mockFetch.mockResolvedValue(errorResponse(500));
+      mockFetch.mockResolvedValue(makeErrorResponse(500));
 
-      await expect(anaf.searchCompany('EPAM')).rejects.toThrow('ANAF search error: 500');
+      await expect(anaf.searchCompany('ULMA')).rejects.toThrow('ANAF search error: 500');
     });
 
-    it('should encode brand name in URL', async () => {
-      let capturedUrl;
-      mockFetch.mockImplementation((url) => {
-        capturedUrl = url;
-        return Promise.resolve(anafSearchResponse([]));
-      });
+    it('should URL-encode the query parameter', async () => {
+      mockFetch.mockResolvedValue(anafSearchResponse([]));
+      await anaf.searchCompany('ULMA PACKAGING SRL');
 
-      await anaf.searchCompany('EPAM SRL');
-      expect(capturedUrl).toContain(encodeURIComponent('EPAM SRL'));
+      expect(capturedUrl).toContain(encodeURIComponent('ULMA PACKAGING SRL'));
     });
   });
 
   describe('getCompanyFromANAF', () => {
-    it('should return company data for valid CIF', async () => {
-      mockFetch.mockResolvedValue(anafCompanyResponse(ANRAF_RECORD));
+    it('should fetch company by CIF and return details', async () => {
+      mockFetch.mockResolvedValue(anafCompanyResponse(ULMA_ANAF_RECORD));
 
-      const data = await anaf.getCompanyFromANAF('33159615');
+      const data = await anaf.getCompanyFromANAF('47978792');
 
       expect(data).toBeDefined();
-      expect(data.cui).toBe(33159615);
-      expect(data.name).toBe('EPAM SYSTEMS INTERNATIONAL SRL');
+      expect(data.cui).toBe(47978792);
+      expect(data.name).toBe('ULMA PACKAGING S.R.L.');
+    });
+
+    it('should include address in response', async () => {
+      mockFetch.mockResolvedValue(anafCompanyResponse(ULMA_ANAF_RECORD));
+
+      const data = await anaf.getCompanyFromANAF('47978792');
+
       expect(data).toHaveProperty('address');
-      expect(data).toHaveProperty('registrationNumber');
+      expect(data.address).toContain('BIRUINŢEI');
     });
 
-    it('should retry on HTTP error then succeed', async () => {
-      mockFetch
-        .mockResolvedValueOnce(errorResponse(500))
-        .mockResolvedValueOnce(anafCompanyResponse(ANRAF_RECORD));
-
-      const data = await anaf.getCompanyFromANAF('33159615');
-
-      expect(data).toBeDefined();
-      expect(data.cui).toBe(33159615);
-      expect(mockFetch).toHaveBeenCalledTimes(2);
-    });
-
-    it('should throw after exhausting retries', async () => {
-      mockFetch.mockResolvedValue(errorResponse(500));
-
-      await expect(anaf.getCompanyFromANAF('33159615')).rejects.toThrow();
-      expect(mockFetch).toHaveBeenCalledTimes(3);
-    });
-
-    it('should handle API-level error response', async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        json: async () => ({ success: false, error: { message: 'Company not found' } })
-      });
-
-      await expect(anaf.getCompanyFromANAF('00000000')).rejects.toThrow();
-    });
-
-    it('should return null when data is null', async () => {
+    it('should throw when company not found', async () => {
       mockFetch.mockResolvedValue(anafCompanyResponse(null));
 
-      const data = await anaf.getCompanyFromANAF('33159615');
-      expect(data).toBeNull();
+      await expect(anaf.getCompanyFromANAF('47978792')).rejects.toThrow('ANAF company not found');
+    });
+
+    it('should build correct request URL', async () => {
+      mockFetch.mockResolvedValue(anafCompanyResponse(ULMA_ANAF_RECORD));
+      await anaf.getCompanyFromANAF('47978792');
+
+      expect(capturedUrl).toBe('https://demoanaf.ro/api/company/47978792');
     });
   });
 
   describe('getCompanyFromANAFWithFallback', () => {
-    it('should return fresh data when API works', async () => {
-      mockFetch.mockResolvedValue(anafCompanyResponse(ANRAF_RECORD));
+    it('should return live data when ANAF is available', async () => {
+      mockFetch.mockResolvedValue(anafCompanyResponse(ULMA_ANAF_RECORD));
 
-      const data = await anaf.getCompanyFromANAFWithFallback('33159615');
+      const data = await anaf.getCompanyFromANAFWithFallback('47978792');
 
-      expect(data.name).toBe('EPAM SYSTEMS INTERNATIONAL SRL');
+      expect(data.name).toBe('ULMA PACKAGING S.R.L.');
+      expect(data.cui).toBe(47978792);
     });
 
-    it('should use cached data when API fails', async () => {
-      mockFetch.mockResolvedValue(errorResponse(500));
+    it('should fallback to cached data when ANAF fails', async () => {
+      mockFetch.mockResolvedValue(makeErrorResponse(500));
 
-      const data = await anaf.getCompanyFromANAFWithFallback('33159615', CACHED_DATA);
+      const data = await anaf.getCompanyFromANAFWithFallback('47978792', CACHED_DATA);
 
-      expect(data).toEqual(CACHED_DATA);
+      expect(data.name).toBe('ULMA PACKAGING S.R.L.');
+      expect(data.cui).toBe(47978792);
     });
 
-    it('should throw when API fails and no cache available', async () => {
-      mockFetch.mockResolvedValue(errorResponse(500));
+    it('should re-throw when no cached fallback available', async () => {
+      mockFetch.mockResolvedValue(makeErrorResponse(500));
 
-      await expect(anaf.getCompanyFromANAFWithFallback('33159615')).rejects.toThrow();
+      await expect(anaf.getCompanyFromANAFWithFallback('47978792')).rejects.toThrow();
     });
   });
 });

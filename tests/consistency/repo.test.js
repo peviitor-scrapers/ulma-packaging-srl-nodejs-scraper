@@ -2,12 +2,14 @@ import fetch from "node-fetch";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import companyConfig from "../../config/company.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.GITHUB_REPOSITORY;
 const TOKEN = process.env.GITHUB_TOKEN;
-const SCRAPER_YML = ".github/workflows/job-seeker-ro-spider.yml";
 
+const COMPANY_BRAND = companyConfig.brand;
+const COMPANY_LEGAL_NAME = companyConfig.legalName;
 
 function repoUrl(apiPath) {
   return `https://api.github.com/repos/${REPO}${apiPath}`;
@@ -50,8 +52,6 @@ describe("Repository Configuration", () => {
       expect(data.homepage).toMatch(/^https?:\/\//);
       console.log(`✅ GitHub Pages URL: ${data.homepage}`);
     });
-
-    // deploy.yml removed — legacy GitHub Pages auto-deploys from docs/
   });
 
   describe("hosted HTML page", () => {
@@ -76,7 +76,8 @@ describe("Repository Configuration", () => {
       const html = await res.text();
       expect(html).toContain("<!DOCTYPE html>");
       expect(html).toContain("peviitor");
-      expect(html).toContain("EPAM");
+      const brandInHtml = COMPANY_BRAND.charAt(0).toUpperCase() + COMPANY_BRAND.slice(1);
+      expect(html.toLowerCase()).toContain(COMPANY_BRAND.toLowerCase());
       console.log(`✅ GitHub Pages HTML loaded from ${pagesUrl}`);
     });
   });
@@ -94,13 +95,13 @@ describe("Repository Configuration", () => {
 
   describe("workflow files", () => {
     it("must have job-seeker-ro-spider.yml", () => {
-      const ymlPath = path.resolve(__dirname, "../..", SCRAPER_YML);
+      const ymlPath = path.resolve(__dirname, "../..", ".github/workflows/job-seeker-ro-spider.yml");
       expect(fs.existsSync(ymlPath)).toBe(true);
       const content = fs.readFileSync(ymlPath, "utf-8");
       expect(content).toContain("name: Oportunitati SI Cariere");
       expect(content).toContain("schedule");
       expect(content).toContain("workflow_dispatch");
-      console.log(`✅ ${SCRAPER_YML} exists with expected content`);
+      console.log(`✅ .github/workflows/job-seeker-ro-spider.yml exists with expected content`);
     });
   });
 });

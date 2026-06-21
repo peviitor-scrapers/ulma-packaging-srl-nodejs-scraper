@@ -1,17 +1,14 @@
 # AGENTS.md — Rules for AI agents
 
 ## Project
-EPAM scraper for peviitor.ro (Node.js, ESM, Jest)
+ULMA PACKAGING S.R.L. scraper for peviitor.ro (Node.js, ESM, Jest)
 
-## 📐 This Repo Is a Template
-This repo is the **reference implementation** for all Node.js scrapers in the peviitor.ro ecosystem. Other scrapers are derived from it.
+## 🌱 This Repo Is a Derived Scraper
+This repo is a **derived scraper** for ULMA PACKAGING S.R.L., generated from the EPAM template. The source of truth for company identity is `config/company.json`.
 
-**🤖 If you've been asked to CREATE or RECREATE a derived scraper, read [AI-DERIVATION-GUIDE.md](AI-DERIVATION-GUIDE.md) first.** That file is the consolidated playbook covering every step + all known pitfalls from past derivations.
-
-When making changes to this template:
+When making changes:
 - **All company-specific identity lives in `config/company.json`** (CIF, brand, legalName, URLs, API params). Read from `config/company.js` in Node code, or via `jq` in workflows. Never hardcode in source files.
-- **Only the API parsing logic in `index.js`** (`fetchJobsPage`, `parseApiJobs`) is EPAM-specific. The output shape (`mapToJobModel`, `transformJobsForSOLR`) must stay uniform across derived scrapers.
-- **If you add a new file, update [CONTRIBUTING.md](CONTRIBUTING.md)** — the derivation checklist must stay accurate.
+- **Only the scraping logic in `index.js`** is company-specific. The output shape (`mapToJobModel`, `transformJobsForSOLR`) must stay uniform across scrapers.
 
 ## Critical Rules
 
@@ -21,7 +18,7 @@ When polling a workflow run with `until [ "$(gh run view ID --json status -q .st
 
 **Always specify the repo explicitly:**
 ```bash
-gh run view <RUN_ID> --repo sebiboga/<derived-repo>-nodejs-scraper --json status -q .status
+gh run view <RUN_ID> --repo sebiboga/ulma-packaging-srl-nodejs-scraper --json status -q .status
 ```
 
 Before starting any `gh run watch` or polling loop in the background, sanity-check:
@@ -49,46 +46,20 @@ NEVER use paths outside the project (e.g. `C:\Users\...\AppData\Local\Temp\openc
 
 ### 4. Testing
 ```bash
-# All tests
-npm test
-
-# Unit tests (no env vars needed)
 npm run test:unit
-
-# Integration tests (ANAF public API, SOLR conditional)
-npm run test:integration
-
-# E2E tests (real EPAM API, SOLR conditional)
-npm run test:e2e
-
-# Consistency tests (GitHub repo config — needs GITHUB_REPOSITORY + GITHUB_TOKEN)
-npm run test:consistency
+npm run test:integration   # needs ANAF + SOLR_AUTH
+npm run test:e2e           # needs ANAF + SOLR_AUTH
+npm run test:consistency   # needs GITHUB_REPOSITORY + GITHUB_TOKEN
 ```
 
-### 5. ESM + Jest
-- Use `jest.unstable_mockModule` (NOT `jest.mock`) for mocking ESM modules
-- Run with `--experimental-vm-modules` flag
-- SOLR tests use conditional `itIfSolr` helper — auto-skip when `SOLR_AUTH` not set
+### 5. Commit & Push
+- `git add -A && git commit -m "..." && git push`
+- Commit messages must reference the related issue
+- Never `--force` push
 
-### 6. Verification
-- După orice modificare, urmează [VERIFY.md](VERIFY.md) pas cu pas
-- Ultimul pas = rulează scraperul prin GitHub Actions, verifică job-urile în SOLR, și verifică că `docs/jobs.md` a fost generat și este accesibil pe GitHub Pages
-- Toate workflow-urile din `.github/workflows/` trebuie să treacă înainte de merge
-
-### 7. Module Structure
-- `config/company.json` + `config/company.js` — single source of truth for company identity
-- `src/anaf.js` — core ANAF library (imported by company.js); retry logic: 3 retries, 2s exponential backoff
-- `src/markdown-generator.js` — generates `docs/jobs.md` after each scrape; called from index.js
-- `src/job-validator.js` — shared `validateByHead` + `validateByContent` used by both validator CLIs
-- `demoanaf.js` — CLI wrapper around src/anaf.js
-- `company.js` — company validation (ANAF + Peviitor + SOLR); root `company.json` is a 7-day ANAF cache committed to repo, with stale fallback
-- `solr.js` — SOLR operations
-- `validate-jobs.js` — manual deep validator (content-aware); thin wrapper over src/job-validator.js
-- `tests/validate-epam-jobs.js` — CI fast validator (HEAD only); thin wrapper over src/job-validator.js + solr.js
-- `index.js` — main scraper orchestrator
-
-### 8. Caching Behavior
-- `tmp/company.json` — per-run scratch cache (gitignored)
-- `company.json` (root) — committed cache, refreshed every 7 days (configurable via `CACHE_MAX_AGE_DAYS` in company.js)
-- If ANAF is unreachable AND cache is stale, the code falls back to the stale cache rather than failing the scrape
-- `docs/company.json` is regenerated on every scrape so GitHub Pages can read company identity
+### 6. DO NOT modify these files (derived from template)
+- `solr.js`
+- `company.js`
+- `src/` (except for configuration)
+- `validate-jobs.js`
+- `.github/workflows/automation-testing.yml`

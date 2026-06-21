@@ -1,11 +1,10 @@
 {
-  "cif": "33159615",
-  "legalName": "EPAM SYSTEMS INTERNATIONAL SRL",
-  "brand": "EPAM",
-  "website": "https://www.epam.com",
-  "careerUrl": "https://careers.epam.com",
-  "apiBase": "https://careers.epam.com",
-  "apiCountryId": "8150000000000001155",
-  "defaultLocation": "București",
-  "scraperFile": "https://raw.githubusercontent.com/sebiboga/epam-systems-international-srl-nodejs-scraper/main/.github/workflows/job-seeker-ro-spider.yml"
+  "cif": "47978792",
+  "legalName": "ULMA PACKAGING S.R.L.",
+  "brand": "ulmapackaging",
+  "website": "https://www.ulmapackaging.ro",
+  "careerUrl": "https://www.ulmapackaging.ro/lucreaza-cu-noi/",
+  "apiBase": "https://www.ulmapackaging.ro",
+  "defaultLocation": "Pantelimon",
+  "scraperFile": "https://raw.githubusercontent.com/sebiboga/ulma-packaging-srl-nodejs-scraper/main/.github/workflows/job-seeker-ro-spider.yml"
 }

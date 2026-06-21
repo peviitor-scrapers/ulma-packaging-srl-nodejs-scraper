@@ -1,139 +1,93 @@
-import { generateJobsMarkdown } from "../../src/markdown-generator.js";
+import { generateJobsMarkdown } from '../../src/markdown-generator.js';
 
-const baseCompany = {
-  id: "33159615",
-  company: "EPAM SYSTEMS INTERNATIONAL SRL",
-  brand: "EPAM",
+const companyData = {
+  id: "47978792",
+  company: "ULMA PACKAGING S.R.L.",
+  brand: "ulmapackaging",
   status: "activ",
-  location: ["București"],
-  website: ["https://www.epam.com"],
-  career: ["https://careers.epam.com"],
-  lastScraped: "2026-06-17"
+  location: ["Pantelimon"],
+  website: ["https://www.ulmapackaging.ro"],
+  career: ["https://www.ulmapackaging.ro/lucreaza-cu-noi/"],
+  lastScraped: "2026-06-21"
 };
 
 const baseJob = {
-  url: "https://careers.epam.com/en/vacancy/123_en",
-  title: "Senior Node.js Developer",
-  workmode: "hybrid",
-  location: ["București"],
-  tags: ["node.js", "javascript"],
-  status: "scraped"
+  url: "https://ulmapackaging.talentclue.com/en/node/123960156/4590",
+  title: "Montator Electromecanic",
+  location: ["Apahida"],
+  company: "ULMA PACKAGING S.R.L.",
+  cif: "47978792",
+  status: "scraped",
+  date: "2026-06-21T10:00:00.000Z"
 };
 
-describe("generateJobsMarkdown", () => {
-  describe("company section", () => {
-    it("includes company name as h1", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("# EPAM SYSTEMS INTERNATIONAL SRL");
+describe('markdown-generator.js', () => {
+  describe('generateJobsMarkdown', () => {
+    it('should include company name in heading', () => {
+      const md = generateJobsMarkdown(companyData, [baseJob]);
+      expect(md).toContain("# ULMA PACKAGING S.R.L.");
     });
 
-    it("includes CIF", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("33159615");
+    it('should include CIF', () => {
+      const md = generateJobsMarkdown(companyData, [baseJob]);
+      expect(md).toContain("47978792");
     });
 
-    it("includes brand", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("EPAM");
+    it('should include brand', () => {
+      const md = generateJobsMarkdown(companyData, [baseJob]);
+      expect(md).toContain("ulmapackaging");
     });
 
-    it("includes status", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("activ");
+    it('should include job table with titles and locations', () => {
+      const md = generateJobsMarkdown(companyData, [baseJob]);
+      expect(md).toContain("| Job");
+      expect(md).toContain("Montator Electromecanic");
+      expect(md).toContain("Apahida");
     });
 
-    it("includes website as markdown link", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("[https://www.epam.com](https://www.epam.com)");
+    it('should handle zero jobs', () => {
+      const md = generateJobsMarkdown(companyData, []);
+      expect(md).toContain("ULMA PACKAGING S.R.L.");
     });
 
-    it("includes career page as markdown link", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("[https://careers.epam.com](https://careers.epam.com)");
+    it('should include company website and career URLs', () => {
+      const md = generateJobsMarkdown(companyData, [baseJob]);
+      expect(md).toContain("[https://www.ulmapackaging.ro](https://www.ulmapackaging.ro)");
+      expect(md).toContain("[https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/)");
     });
 
-    it("includes lastScraped date", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("2026-06-17");
+    it('should handle minimal company data', () => {
+      const minimal = { id: "47978792", company: "ULMA PACKAGING S.R.L." };
+      const md = generateJobsMarkdown(minimal, [baseJob]);
+      expect(md).toContain("# ULMA PACKAGING S.R.L.");
     });
 
-    it("omits optional fields when not present", () => {
-      const minimal = { id: "33159615", company: "EPAM SYSTEMS INTERNATIONAL SRL" };
-      const md = generateJobsMarkdown(minimal, []);
-      expect(md).toContain("# EPAM SYSTEMS INTERNATIONAL SRL");
-      expect(md).not.toContain("Brand");
-      expect(md).not.toContain("Last Scraped");
-    });
-  });
-
-  describe("jobs section", () => {
-    it("shows job count in heading", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(md).toContain("## Current Job Listings (1)");
+    it('should handle jobs with optional fields', () => {
+      const minimalJob = { url: "https://test.com/1", title: "Job 1" };
+      const md = generateJobsMarkdown(companyData, [minimalJob]);
+      expect(md).toContain("Job 1");
     });
 
-    it("shows 0 when no jobs", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toContain("## Current Job Listings (0)");
+    it('should format location as comma-separated list', () => {
+      const multiLocJob = {
+        ...baseJob,
+        location: ["Cluj-Napoca", "Apahida"]
+      };
+      const md = generateJobsMarkdown(companyData, [multiLocJob]);
+      expect(md).toContain("Cluj-Napoca, Apahida");
     });
 
-    it("includes job title as h3", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(md).toContain("### Senior Node.js Developer");
+    it('should handle multiple jobs', () => {
+      const job2 = { ...baseJob, title: "Operator CNC", url: "https://ulmapackaging.talentclue.com/en/node/123026306/4590" };
+      const md = generateJobsMarkdown(companyData, [baseJob, job2]);
+      expect(md).toContain("Montator Electromecanic");
+      expect(md).toContain("Operator CNC");
     });
 
-    it("includes job URL as markdown link", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(md).toContain("[https://careers.epam.com/en/vacancy/123_en]");
-    });
-
-    it("includes workmode", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(md).toContain("hybrid");
-    });
-
-    it("includes location", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(md).toContain("București");
-    });
-
-    it("includes tags", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(md).toContain("node.js, javascript");
-    });
-
-    it("includes status", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(md).toContain("scraped");
-    });
-
-    it("renders multiple jobs", () => {
-      const job2 = { ...baseJob, title: "DevOps Engineer", url: "https://careers.epam.com/en/vacancy/456_en" };
-      const md = generateJobsMarkdown(baseCompany, [baseJob, job2]);
-      expect(md).toContain("### Senior Node.js Developer");
-      expect(md).toContain("### DevOps Engineer");
-      expect(md).toContain("## Current Job Listings (2)");
-    });
-
-    it("handles job with no optional fields", () => {
-      const minimal = { url: "https://careers.epam.com/en/vacancy/999_en", title: "QA Engineer" };
-      const md = generateJobsMarkdown(baseCompany, [minimal]);
-      expect(md).toContain("### QA Engineer");
-      expect(md).not.toContain("Work Mode");
-      expect(md).not.toContain("Tags");
-    });
-  });
-
-  describe("output format", () => {
-    it("returns a non-empty string", () => {
-      const md = generateJobsMarkdown(baseCompany, [baseJob]);
-      expect(typeof md).toBe("string");
-      expect(md.length).toBeGreaterThan(0);
-    });
-
-    it("includes a generated timestamp", () => {
-      const md = generateJobsMarkdown(baseCompany, []);
-      expect(md).toMatch(/_Generated: \d{4}-\d{2}-\d{2}/);
+    it('should handle job with no location', () => {
+      const minimal = { url: "https://ulmapackaging.talentclue.com/en/node/999", title: "QA Engineer" };
+      const md = generateJobsMarkdown(companyData, [minimal]);
+      expect(md).toContain("QA Engineer");
     });
   });
 });
