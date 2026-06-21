@@ -36,7 +36,7 @@ describe('Integration: API Workflow', () => {
     });
 
     it('should search for ULMA brand and find the company', async () => {
-      const results = await anaf.searchCompany('ULMA');
+      const results = await anaf.searchCompany('ULMA PACKAGING');
 
       expect(Array.isArray(results)).toBe(true);
       expect(results.length).toBeGreaterThan(0);
@@ -207,7 +207,7 @@ describe('Integration: API Workflow', () => {
     });
 
     it('should complete the ANAF validation path', async () => {
-      const searchResults = await anaf.searchCompany('ULMA');
+      const searchResults = await anaf.searchCompany('ULMA PACKAGING');
       expect(searchResults.length).toBeGreaterThan(0);
 
       const ulmaCompany = searchResults.find(c =>
