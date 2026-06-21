@@ -76,8 +76,8 @@ describe("Repository Configuration", () => {
       const html = await res.text();
       expect(html).toContain("<!DOCTYPE html>");
       expect(html).toContain("peviitor");
-      const brandInHtml = COMPANY_BRAND.charAt(0).toUpperCase() + COMPANY_BRAND.slice(1);
-      expect(html.toLowerCase()).toContain(COMPANY_BRAND.toLowerCase());
+      const companyNameFragment = COMPANY_LEGAL_NAME.split(' ').slice(0, 2).join(' ');
+      expect(html.toLowerCase()).toContain(companyNameFragment.toLowerCase());
       console.log(`✅ GitHub Pages HTML loaded from ${pagesUrl}`);
     });
   });
