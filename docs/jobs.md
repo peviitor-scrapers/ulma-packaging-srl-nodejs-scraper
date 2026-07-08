@@ -10,8 +10,8 @@
 | Location | BIRUINŢEI, 334, Ilfov, Oraş Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-07-06 |
+| Last Scraped | 2026-07-08 |
 
 ## Current Job Listings (0)
 
-_Generated: 2026-07-06T10:05:12.286Z_
+_Generated: 2026-07-08T08:15:28.713Z_
