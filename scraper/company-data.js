@@ -10,7 +10,7 @@ import fetch from "node-fetch";
 const ANAF_API_URL = "https://demoanaf.ro/api/company/";
 const ANAF_SEARCH_URL = "https://demoanaf.ro/api/search";
 const CUISCAN_API_URL = "https://cuiscan.ro/api.php";
-const CUISCAN_SEARCH_URL = "https://cuifirma.ro/api/search";
+const CUISFIRMA_SEARCH_URL = "https://cuifirma.ro/api/search";
 const TIMEOUT_MS = 10000;
 
 // ============================================================================
@@ -105,7 +105,7 @@ async function searchFromAnaf(brandName) {
 // ============================================================================
 
 async function searchFromCuifirma(brandName) {
-  const res = await fetch(`${CUISCAN_SEARCH_URL}?q=${encodeURIComponent(brandName)}`, {
+  const res = await fetch(`${CUISFIRMA_SEARCH_URL}?q=${encodeURIComponent(brandName)}`, {
     headers: { "User-Agent": "job_seeker_ro_spider" },
     signal: AbortSignal.timeout(TIMEOUT_MS)
   });

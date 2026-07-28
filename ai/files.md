@@ -10,7 +10,7 @@
 | `scraper/company-data-cli.js` | CLI entry point for company-data.js (thin wrapper) |
 | `scraper/api.js` | Peviitor API operations module - exports querySOLR, deleteJobByUrl, upsertJobs + standalone verify/extract/company commands |
 | `scraper/validate-jobs.js` | **Generic deep validator (manual use).** Full GET requests, parses page body for "no longer available" keywords. Works with any CIF, single URL, or file. Slower but catches soft-404s. Not used by CI. |
-| `scraper/job-validator.js` | Shared validation primitives - exports validateByHead(url), validateByContent(url, opts), DEFAULT_EXPIRED_KEYWORDS. Used by both `validate-jobs.js` and `tests/validate-ulmapackaging-jobs.js`. |
+| `scraper/job-validator.js` | Shared validation primitives - exports validateByHead(url), validateByContent(url, opts), DEFAULT_EXPIRED_KEYWORDS. Used by both `validate-jobs.js` and `tests/validate-ulma-jobs.js`. |
 | `scraper/markdown-generator.js` | Generates docs/jobs.md - exports generateJobsMarkdown(companyData, jobs) |
 
 ## Config — scraper/config/
@@ -26,7 +26,7 @@
 |------|-------------|
 | `tests/package.json` | Jest config for test suite - experimental VM modules, test scripts (unit/integration/e2e/consistency) |
 | `tests/company.json` | Mock ANAF company data for ULMA used in unit tests |
-| `tests/validate-ulmapackaging-jobs.js` | **ULMA-specific fast validator (used by CI).** HEAD requests only, hardcoded ULMA CIF. Called nightly by `automation-testing.yml`. Supports `--dry-run` and `--delete`. |
+| `tests/validate-ulma-jobs.js` | **ULMA-specific fast validator (used by CI).** HEAD requests only, hardcoded ULMA CIF. Called nightly by `automation-testing.yml`. Supports `--dry-run` and `--delete`. |
 | `tests/unit/index.test.js` | Unit tests for index.js - parseApiJobs, mapToJobModel, transformJobsForSOLR |
 | `tests/unit/company.test.js` | Unit tests for company.js - getCompanyBrand, validateAndGetCompany, fallback caching |
 | `tests/unit/api.test.js` | Unit tests for api.js - query, upsert, delete, HTTP error handling |
@@ -36,7 +36,7 @@
 | `tests/integration/workflow.test.js` | Integration tests - ANAF live API, Peviitor API, SOLR company/job cores |
 | `tests/e2e/scraper.test.js` | E2E tests - full pipeline with real ULMA career page, ANAF, and SOLR |
 | `tests/consistency/public.test.js` | Verifies repository is public on GitHub |
-| `tests/consistency/repo.test.js` | Verifies default branch, GitHub Pages, SOLR_AUTH secret, workflow files |
+| `tests/consistency/repo.test.js` | Verifies default branch, GitHub Pages, workflow files |
 | `tests/consistency/topics.test.js` | Verifies repository has required topics: job-seeker-ro-spider, peviitor-ro |
 | `tests/consistency/workflow-naming.test.js` | Validates workflow file naming conventions |
 
@@ -49,7 +49,7 @@
 | `company-model.md` | Company schema definition (Peviitor Core) - fields, types, validation rules |
 | `files.md` | This file - documents role of each project file |
 | `AGENTS.md` | Rules for AI agents working on this project |
-| `AI-DERIVATION-GUIDE.md` | **Comprehensive playbook for AI agents deriving a new scraper from this template.** Consolidates all lessons learned from past derivations (MEJIX, Talent Matchmakers, Artsoft, Continental Hotels). Step-by-step + every known pitfall. AI agents should read this BEFORE starting a derivation. |
+| `AI-DERIVATION-GUIDE.md` | **Comprehensive playbook for AI agents deriving a new scraper from this template.** Step-by-step + every known pitfall. |
 | `BRANCH.md` | Branch strategy and naming conventions |
 | `CHANGELOG.md` | Version history and notable changes |
 | `CONTRIBUTING.md` | Contribution guidelines |
@@ -69,7 +69,7 @@
 | `package-lock.json` | Locked dependency versions |
 | `.npmrc` | npm configuration |
 | `.gitignore` | Ignores node_modules/, tmp/, .env.local |
-| `.env.local` | Local environment variables (SOLR_AUTH) - NOT committed |
+| `.env.local` | Local environment variables - NOT committed |
 | `.github/CODEOWNERS` | Code ownership rules for PR reviews |
 | `.github/workflows/job-seeker-ro-spider.yml` | Daily scraping workflow (6 AM UTC) |
 | `.github/workflows/automation-testing.yml` | Automated tests on every push/PR |

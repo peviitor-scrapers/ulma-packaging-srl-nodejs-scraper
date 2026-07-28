@@ -2,7 +2,7 @@
 
 **job_seeker_ro_spider** — scraper pentru job-urile ULMA PACKAGING S.R.L. din România.
 
-Extrage anunțurile de pe [ulmapackaging.ro](https://www.ulmapackaging.ro/lucreaza-cu-noi/) și le publică în [peviitor.ro](https://peviitor.ro) prin API-ul SOLR.
+Extrage anunțurile de pe [ulmapackaging.ro](https://www.ulmapackaging.ro/lucreaza-cu-noi/) și le publică în [peviitor.ro](https://peviitor.ro) prin API-ul Peviitor.
 
 ## Identificare
 
@@ -18,7 +18,7 @@ job_seeker_ro_spider
    - Denumirea oficială: ULMA PACKAGING S.R.L.
    - Status: activ/inactiv/radiat
    - Adresa completă din registrul comerțului
-2. **Scrape-uiește job-urile** — extrage lista completă de job-uri de pe pagina de cariere ULMA Packaging Romania (TalentClue HTML/cheerio)
+2. **Scrape-uiește job-urile** — extrage lista completă de job-uri de pe pagina de cariere ULMA Packaging Romania (TalentClue JSON)
 3. **Caută și pe ANOFM** — interoghează API-ul public ANOFM pentru job-uri asociate acestui CIF
 4. **Transformă datele** — normalizează locațiile (doar orașe românești), workmode-ul (remote/on-site/hybrid)
 5. **Stochează în SOLR** — upsert în `job` core (job-urile) și `company` core (datele companiei cu adresa completă)
@@ -57,8 +57,8 @@ job_seeker_ro_spider
 | CUIScan | `https://cuiscan.ro/api.php` | Public |
 | CUIFirma | `https://cuifirma.ro/api/search` | Public |
 | ANOFM | `https://mediere.anofm.ro/api/entity/vw_public_job_posting` | Public |
-| SOLR (job core) | `https://solr.peviitor.ro/solr/job` | `SOLR_AUTH` |
-| SOLR (company core) | `https://solr.peviitor.ro/solr/company` | `SOLR_AUTH` |
+| Peviitor API (jobs) | `https://api.peviitor.ro/v1/scraper/jobs/` | User-Agent: `job_seeker_ro_spider` |
+| Peviitor API (company) | `https://api.peviitor.ro/v1/firme/company/` | User-Agent: `job_seeker_ro_spider` |
 
 ## Testare
 
@@ -76,4 +76,4 @@ npm run test:integration
 npm run test:e2e
 ```
 
-Testele SOLR folosesc `itIfSolr` — se auto-skip dacă variabila `SOLR_AUTH` nu e setată.
+Testele folosesc `itIfApi` — se auto-skip dacă API-ul Peviitor nu e disponibil.

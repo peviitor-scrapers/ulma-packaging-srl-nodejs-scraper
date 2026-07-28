@@ -45,7 +45,7 @@ function itIfAnaf(name, fn, timeout) {
 }
 
 let COMPANY_CONFIG;
-const MSG_CIF = '47978792';
+const ULMA_CIF = '47978792';
 
 beforeAll(async () => {
   [HAS_API, HAS_ANAF] = await Promise.all([checkApiAvailability(), checkAnafAvailability()]);
@@ -72,7 +72,7 @@ describe('Integration: API Workflow', () => {
         c.name.toUpperCase().includes('ULMA PACKAGING') && c.statusLabel === 'Funcțiune'
       );
       expect(msg).toBeDefined();
-      expect(msg.cui.toString()).toBe(MSG_CIF);
+      expect(msg.cui.toString()).toBe(ULMA_CIF);
     }, 15000);
 
     itIfAnaf('should return empty array for non-existent brand', async () => {
@@ -83,7 +83,7 @@ describe('Integration: API Workflow', () => {
     }, 15000);
 
     itIfAnaf('should fetch company details by valid CIF', async () => {
-      const data = await anaf.getCompanyFromANAF(MSG_CIF);
+      const data = await anaf.getCompanyFromANAF(ULMA_CIF);
 
       expect(data).toBeDefined();
       expect(data.cui).toBe(47978792);
@@ -102,7 +102,7 @@ describe('Integration: API Workflow', () => {
     itIfAnaf('should use cached data when API fails (getCompanyFromANAFWithFallback)', async () => {
       const cached = { cui: 47978792, name: 'ULMA PACKAGING S.R.L.' };
 
-      const data = await anaf.getCompanyFromANAFWithFallback(MSG_CIF, cached);
+      const data = await anaf.getCompanyFromANAFWithFallback(ULMA_CIF, cached);
 
       expect(data).toBeDefined();
       expect(data.cui).toBe(47978792);
@@ -112,9 +112,9 @@ describe('Integration: API Workflow', () => {
   describe('Peviitor API', () => {
     itIfApi('should return company data from Peviitor API', async () => {
       const api = await import('../../scraper/api.js');
-      const company = await api.getCompanyByCif(MSG_CIF);
+      const company = await api.getCompanyByCif(ULMA_CIF);
       expect(company).toBeTruthy();
-      expect(company.id).toBe(MSG_CIF);
+      expect(company.id).toBe(ULMA_CIF);
     }, 15000);
   });
 
@@ -126,10 +126,10 @@ describe('Integration: API Workflow', () => {
     });
 
     itIfApi('should query company core by CIF', async () => {
-      const result = await api.getCompanyByCif(MSG_CIF);
+      const result = await api.getCompanyByCif(ULMA_CIF);
 
       expect(result).not.toBeNull();
-      expect(result.id).toBe(MSG_CIF);
+      expect(result.id).toBe(ULMA_CIF);
       expect(result.company).toBe(COMPANY_CONFIG.company);
       expect(result.status).toBe('activ');
       expect(Array.isArray(result.location)).toBe(true);
@@ -137,9 +137,9 @@ describe('Integration: API Workflow', () => {
     }, 15000);
 
     itIfApi('should have required company model fields', async () => {
-      const result = await api.getCompanyByCif(MSG_CIF);
+      const result = await api.getCompanyByCif(ULMA_CIF);
 
-      expect(result).toHaveProperty('id', MSG_CIF);
+      expect(result).toHaveProperty('id', ULMA_CIF);
       expect(result).toHaveProperty('company');
       expect(result).toHaveProperty('status');
       expect(['activ', 'suspendat', 'inactiv', 'radiat']).toContain(result.status);
@@ -156,7 +156,7 @@ describe('Integration: API Workflow', () => {
     }, 15000);
 
     itIfApi('should have optional field (group) if present', async () => {
-      const result = await api.getCompanyByCif(MSG_CIF);
+      const result = await api.getCompanyByCif(ULMA_CIF);
 
       if (result.group !== undefined) {
         expect(typeof result.group).toBe('string');
@@ -172,10 +172,10 @@ describe('Integration: API Workflow', () => {
     });
 
     itIfApi('should query jobs by CIF and return valid data', async () => {
-      const result = await api.querySOLR(MSG_CIF);
+      const result = await api.querySOLR(ULMA_CIF);
 
       if (result.numFound === 0) {
-        console.log('⚠️ No MSG jobs in SOLR — skipping job field assertions (scraper may not have run yet)');
+        console.log('⚠️ No ULMA jobs in SOLR — skipping job field assertions (scraper may not have run yet)');
         return;
       }
 
@@ -186,13 +186,13 @@ describe('Integration: API Workflow', () => {
       expect(job).toHaveProperty('url');
       expect(job).toHaveProperty('title');
       expect(job).toHaveProperty('company', COMPANY_CONFIG.company);
-      expect(job).toHaveProperty('cif', MSG_CIF);
+      expect(job).toHaveProperty('cif', ULMA_CIF);
       expect(job).toHaveProperty('status');
       expect(job).toHaveProperty('location');
     }, 15000);
 
     itIfApi('should not have duplicate URLs for same CIF', async () => {
-      const result = await api.querySOLR(MSG_CIF);
+      const result = await api.querySOLR(ULMA_CIF);
 
       const urls = result.docs.map(j => j.url);
       const uniqueUrls = new Set(urls);
@@ -201,7 +201,7 @@ describe('Integration: API Workflow', () => {
 
     itIfApi('should have valid status values for all jobs', async () => {
       const validStatuses = ['scraped', 'tested', 'verified', 'published'];
-      const result = await api.querySOLR(MSG_CIF);
+      const result = await api.querySOLR(ULMA_CIF);
 
       for (const job of result.docs) {
         expect(validStatuses).toContain(job.status);
@@ -209,7 +209,7 @@ describe('Integration: API Workflow', () => {
     }, 15000);
 
     itIfApi('should have valid CIF format for all jobs', async () => {
-      const result = await api.querySOLR(MSG_CIF);
+      const result = await api.querySOLR(ULMA_CIF);
 
       for (const job of result.docs) {
         expect(job.cif).toMatch(/^\d{8}$/);
@@ -232,12 +232,12 @@ describe('Integration: API Workflow', () => {
       const searchResults = await anaf.searchCompany('ULMA PACKAGING');
       expect(searchResults.length).toBeGreaterThan(0);
 
-      const msgCompany = searchResults.find(c =>
+      const ulmaCompany = searchResults.find(c =>
         c.name.toUpperCase().includes('ULMA PACKAGING') && c.statusLabel === 'Funcțiune'
       );
-      expect(msgCompany).toBeDefined();
+      expect(ulmaCompany).toBeDefined();
 
-      const anafData = await anaf.getCompanyFromANAF(msgCompany.cui.toString());
+      const anafData = await anaf.getCompanyFromANAF(ulmaCompany.cui.toString());
       expect(anafData.name).toBe('ULMA PACKAGING S.R.L.');
       expect(anafData.inactive).toBe(false);
     }, 30000);
@@ -245,9 +245,9 @@ describe('Integration: API Workflow', () => {
     itIfApi('should have matching CIF in company core', async () => {
       const companyResult = await companyModule.validateAndGetCompany();
 
-      const companyData = await api.getCompanyByCif(MSG_CIF);
+      const companyData = await api.getCompanyByCif(ULMA_CIF);
       expect(companyData).not.toBeNull();
-      expect(companyData.id).toBe(MSG_CIF);
+      expect(companyData.id).toBe(ULMA_CIF);
       expect(companyData.company).toBe(COMPANY_CONFIG.company);
     }, 30000);
 
@@ -256,10 +256,10 @@ describe('Integration: API Workflow', () => {
 
       expect(companyResult.status).toBe('active');
       expect(companyResult.company).toBe(COMPANY_CONFIG.company);
-      expect(companyResult.cif).toBe(MSG_CIF);
+      expect(companyResult.cif).toBe(ULMA_CIF);
 
       if (companyResult.existingJobsCount === 0) {
-        console.log('⚠️ No MSG jobs in SOLR — skipping job count assertion (scraper may not have run yet)');
+        console.log('⚠️ No ULMA jobs in SOLR — skipping job count assertion (scraper may not have run yet)');
         return;
       }
       expect(companyResult.existingJobsCount).toBeGreaterThan(0);

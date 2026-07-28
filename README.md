@@ -12,7 +12,7 @@
 
 # job_seeker_ro_spider — ULMA PACKAGING S.R.L. Scraper
 
-**job_seeker_ro_spider** — un scraper pentru job-urile ULMA PACKAGING S.R.L. din România. Extrage anunțurile de pe [pagina de cariere ULMA Packaging](https://www.ulmapackaging.ro/lucreaza-cu-noi/) și le publică în [peviitor.ro](https://peviitor.ro) prin API-ul SOLR.
+**job_seeker_ro_spider** — un scraper pentru job-urile ULMA PACKAGING S.R.L. din România. Extrage anunțurile de pe [pagina de cariere ULMA Packaging](https://www.ulmapackaging.ro/lucreaza-cu-noi/) și le publică în [peviitor.ro](https://peviitor.ro) prin API-ul Peviitor.
 
 > **🌱 Derived scraper.** Acest repo a fost derivat din [EPAM template](https://github.com/sebiboga/epam-systems-international-srl-nodejs-scraper) (HTML/cheerio, single-page).
 
@@ -22,7 +22,7 @@ Proiectul automatizează colectarea zilnică a job-urilor ULMA PACKAGING S.R.L. 
 
 ## Features
 
-- Extrage job-uri din pagina de cariere ULMA Packaging (TalentClue HTML/cheerio)
+- Extrage job-uri din pagina de cariere ULMA Packaging (TalentClue JSON)
 - Validează compania via ANAF (CUI, status activ/inactiv, adresă completă)
 - **Cache ANAF la 7 zile** — committed în repo, nu lovește demoANAF la fiecare scrape
 - **Fallback la cache stale** dacă ANAF e indisponibil

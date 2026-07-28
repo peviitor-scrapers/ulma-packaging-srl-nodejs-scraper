@@ -119,14 +119,6 @@ function transformJobsForSOLR(payload) {
 
   const citySet = new Set(romanianCities.map(c => c.toLowerCase()));
 
-  const normalizeWorkmode = (wm) => {
-    if (!wm) return undefined;
-    const lower = wm.toLowerCase();
-    if (lower.includes('remote')) return 'remote';
-    if (lower.includes('office') || lower.includes('on-site') || lower.includes('site')) return 'on-site';
-    return 'hybrid';
-  };
-
   const transformed = {
     ...payload,
     company: payload.company?.toUpperCase(),
@@ -158,16 +150,21 @@ async function main() {
     console.log(`Found ${existingCount} existing jobs in SOLR`);
 
     console.log("=== Step 2: Validate company via ANAF ===");
-    const { company, cif, address } = await validateAndGetCompany();
+    const { company, cif, address, status } = await validateAndGetCompany();
     COMPANY_NAME = company;
     const localCif = cif;
+
+    if (status === 'inactive') {
+      console.log("⚠️ Company is INACTIVE — jobs deleted, skipping scrape.");
+      return;
+    }
 
     try {
       await upsertCompany({
         id: cif,
         company,
         brand: companyConfig.brand || undefined,
-        status: "activ",
+        status: status || "activ",
         location: address ? [address] : companyConfig.location,
         website: companyConfig.website,
         career: companyConfig.career,
@@ -204,7 +201,7 @@ async function main() {
       id: localCif,
       company: transformedPayload.company,
       brand: companyConfig.brand || undefined,
-      status: "activ",
+      status: status || "activ",
       location: address ? [address] : companyConfig.location,
       website: companyConfig.website,
       career: companyConfig.career,

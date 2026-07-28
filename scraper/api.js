@@ -248,7 +248,7 @@ async function checkUrl(url) {
   try {
     const res = await fetch(url, {
       method: "HEAD",
-      timeout: TIMEOUT,
+      signal: AbortSignal.timeout(TIMEOUT),
       headers: { "User-Agent": "job_seeker_ro_spider" }
     });
     return { url, status: res.status, valid: res.ok };
@@ -355,7 +355,7 @@ async function runExtract(cif) {
 async function runCompanyQuery(args) {
   console.log("=== Query Company via API ===\n");
   
-  const query = args[1] || "msg";
+  const query = args[1] || "ulma";
   console.log(`Query: ${query}`);
   
   const results = await searchCompanyByName(query);

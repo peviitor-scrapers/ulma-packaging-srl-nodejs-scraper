@@ -35,7 +35,7 @@ function cuiscanCompanyResponse(data) {
   };
 }
 
-const MSG_ANAF_RECORD = {
+const ULMA_ANAF_RECORD = {
   cui: 47978792,
   name: 'ULMA PACKAGING S.R.L.',
   address: 'BIRUINŢEI, 334, 164, Bucureşti Oraş Pantelimon',
@@ -139,7 +139,7 @@ describe('scraper/company-data.js', () => {
 
   describe('getCompanyFromANAF', () => {
     it('should return company data for valid CIF', async () => {
-      mockFetch.mockResolvedValue(anafCompanyResponse(MSG_ANAF_RECORD));
+      mockFetch.mockResolvedValue(anafCompanyResponse(ULMA_ANAF_RECORD));
 
       const data = await anaf.getCompanyFromANAF('47978792');
 
@@ -191,7 +191,7 @@ describe('scraper/company-data.js', () => {
 
   describe('getCompanyFromANAFWithFallback', () => {
     it('should return fresh data when API works', async () => {
-      mockFetch.mockResolvedValue(anafCompanyResponse(MSG_ANAF_RECORD));
+      mockFetch.mockResolvedValue(anafCompanyResponse(ULMA_ANAF_RECORD));
 
       const data = await anaf.getCompanyFromANAFWithFallback('47978792');
 

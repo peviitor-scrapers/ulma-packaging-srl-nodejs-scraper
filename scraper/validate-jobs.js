@@ -9,7 +9,7 @@
  * SCOPE: Generic — works with ANY CIF, single URL, or list from file.
  * Used for ad-hoc cleanup and debugging. NOT called from CI.
  *
- * For the fast CI-friendly MSG-only HEAD check, see
+ * For the fast CI-friendly ULMA-only HEAD check, see
  * tests/validate-ulma-jobs.js.
  *
  * Usage:
@@ -135,7 +135,7 @@ Usage:
   node validate-jobs.js --file <file.json>       - Check URLs from JSON file
 
 Examples:
-  node validate-jobs.js 47978792                 - Validate MSG jobs
+  node validate-jobs.js 47978792                 - Validate ULMA PACKAGING jobs
   node validate-jobs.js --url "https://www.ulmapackaging.ro/en/careers/job-offerings/example"
   node validate-jobs.js --urls "url1" "url2" "url3"
   node validate-jobs.js --file jobs.json

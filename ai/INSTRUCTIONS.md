@@ -38,7 +38,7 @@ When working on this scraper:
 ## Technologies
 
 - **Node.js & JavaScript** - For scraping and data extraction
-- **Apache SOLR** - For data storage and indexing
+- **Peviitor API** - For data storage and retrieval (api.peviitor.ro)
 - **Claude Code** - For development
 
 ## Workflow Steps
@@ -61,21 +61,15 @@ When working on this scraper:
 ## Running the Scraper
 
 ```bash
-# Set environment variables
-export SOLR_AUTH=your-solr-credentials
-
 # Run the full scraper workflow (single command)
-node index.js
-
-# Test mode (one page only, limit 10 jobs)
-node index.js --test
+node scraper/index.js
 ```
 
 > **Important**: Scraper does NOT delete jobs from other sources (ANOFM, etc). It only upserts ULMA careers jobs. Existing jobs are preserved.
 
 ## Full Workflow (automatic)
 
-When running `node index.js`, the following steps happen automatically:
+When running `node scraper/index.js`, the following steps happen automatically:
 
 1. **Check existing jobs count** - Query SOLR by CIF (read-only)
 2. **Validate company via ANAF** - Check company exists and is active
@@ -99,7 +93,7 @@ querySOLR(CIF) - just count, don't delete
     │
     ▼
 company.js (validate company)
-    ├── load cache (tmp/company.json → company.json)
+    ├── load cache (scraper/anaf-cache.json)
     │   └── if fresh (<7 days), skip ANAF entirely
     ├── ANAF API ──► get company name + CIF (only if cache stale/missing)
     ├── Peviitor API ──► validate company model
@@ -139,7 +133,7 @@ generateJobsMarkdown() → docs/jobs.md
 | `scraper/markdown-generator.js` | Generates `docs/jobs.md` with company info and all scraped jobs |
 | `tests/unit/index.test.js` | Unit tests for parseApiJobs, mapToJobModel, transformJobsForSOLR |
 | `tests/unit/company.test.js` | Unit tests for validateAndGetCompany and fallback caching |
-| `tests/unit/solr.test.js` | Unit tests for SOLR query, upsert, delete operations |
+| `tests/unit/api.test.js` | Unit tests for api.js - query, upsert, delete, HTTP error handling |
 | `tests/unit/company-data.test.js` | Unit tests for company-data.js - ANAF search and company retrieval |
 | `tests/integration/workflow.test.js` | Live integration tests - ANAF + SOLR |
 | `tests/e2e/scraper.test.js` | End-to-end tests with real scraping pipeline |
@@ -154,8 +148,7 @@ generateJobsMarkdown() → docs/jobs.md
 - **DemoANAF Company**: `https://demoanaf.ro/api/company/:cui` - Get company details by CIF
 - **CUIScan**: `https://cuiscan.ro/api.php?action=company&cui=CIF` - Company details fallback
 - **CUIFirma Search**: `https://cuifirma.ro/api/search?q=BRAND` - Search fallback
-- **Peviitor API**: `https://api.peviitor.ro/v1/company/`
-- **Solr**: `https://solr.peviitor.ro/solr/job` (auth: via `SOLR_AUTH` environment variable)
+- **Peviitor API**: `https://api.peviitor.ro/v1/` — all job and company operations go through this API
 
 ## Rate Limiting & Politeness
 
@@ -163,11 +156,8 @@ The scraper is intentionally slow to be a good citizen:
 
 | Setting | Value | Where |
 |---------|-------|-------|
-| Delay between pages | 1000 ms | `index.js` — `sleep(1000)` in `scrapeAllListings()` |
-| Page size | 10 jobs | `index.js` — `PAGE_SIZE` constant |
-| Max pages | 10 | `index.js` — `MAX_PAGES` in `scrapeAllListings()` |
-| Request timeout | 10000 ms | `index.js` — `TIMEOUT` constant |
-| ANAF retries | 3 attempts, 2s exponential backoff | `scraper/company-data.js` |
+| Request timeout | 10000 ms | `scraper/company-data.js` — `TIMEOUT_MS` constant |
+| ANAF retries | 1 attempt, no retry | `scraper/company-data.js` — ANAF → CUIScan fallback |
 | Concurrency | 1 (sequential) | No `Promise.all` for paginated fetches |
 | User-Agent | `job_seeker_ro_spider` | Identifies the scraper in server logs |
 
@@ -177,7 +167,6 @@ Derived scrapers should keep these defaults unless the target site explicitly pe
 
 | Variable | Description |
 |----------|-------------|
-| `SOLR_AUTH` | SOLR credentials in format `user:password` |
 | `GITHUB_REPOSITORY` | Used by consistency tests — format: `owner/repo` |
 | `GITHUB_TOKEN` | GitHub API token for consistency tests |
 

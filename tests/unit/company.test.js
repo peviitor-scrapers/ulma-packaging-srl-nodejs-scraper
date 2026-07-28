@@ -47,7 +47,7 @@ function solrResponse(total, data) {
   };
 }
 
-const MSG_ANAF_RECORD = {
+const ULMA_ANAF_RECORD = {
   cui: 47978792,
   name: 'ULMA PACKAGING S.R.L.',
   address: 'BIRUINŢEI, 334, 164, Bucureşti Oraş Pantelimon',
@@ -65,8 +65,8 @@ const COMPANY_CONFIG_TEMPLATE = {
   status: "activ",
   location: ["Pantelimon"],
   website: ["https://www.ulmapackaging.ro"],
-  career: ["https://www.ulmapackaging.ro/en/careers/job-offerings/"],
-  scraperFile: "https://github.com/sebiboga/ulmapackaging.romania-srl-nodejs-scraper/actions/workflows/job-seeker-ro-spider.yml"
+  career: ["https://www.ulmapackaging.ro/lucreaza-cu-noi/"],
+  scraperFile: "https://github.com/sebiboga/ulma-packaging-srl-nodejs-scraper/actions/workflows/job-seeker-ro-spider.yml"
 };
 
 function writeCompanyConfig(lastScraped) {
@@ -110,8 +110,8 @@ describe('company.js', () => {
       companyConfig.lastScraped = new Date().toISOString().split('T')[0];
     });
 
-    it('should fetch MSG via direct CIF lookup and return company data', async () => {
-      mockFetch.mockResolvedValueOnce(anafCompanyResponse(MSG_ANAF_RECORD));
+    it('should fetch ULMA PACKAGING via direct CIF lookup and return company data', async () => {
+      mockFetch.mockResolvedValueOnce(anafCompanyResponse(ULMA_ANAF_RECORD));
 
       const result = await company.getCompanyData();
 
@@ -138,7 +138,7 @@ describe('company.js', () => {
   describe('getCompanyData (with cache)', () => {
     const cachedData = {
       validatedAt: new Date().toISOString(),
-      anaf: MSG_ANAF_RECORD,
+      anaf: ULMA_ANAF_RECORD,
       summary: {
         company: 'ULMA PACKAGING S.R.L.',
         cif: '47978792',

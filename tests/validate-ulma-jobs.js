@@ -1,7 +1,7 @@
 /**
  * ULMA-Specific Job URL Validator (fast, used by CI)
  *
- * Quick nightly cleanup pass over jobs in SOLR. Uses HEAD requests only.
+ * Quick nightly cleanup pass over jobs via API. Uses HEAD requests only.
  * Called by .github/workflows/automation-testing.yml on the scheduled run.
  *
  * For deep content-aware validation across any CIF, see validate-jobs.js
@@ -25,7 +25,7 @@ async function main() {
   console.log(`=== Validating ${COMPANY} (CIF: ${CIF}) ===\n`);
 
   const result = await querySOLR(CIF);
-  console.log(`Total jobs in SOLR: ${result.numFound}`);
+  console.log(`Total jobs via API: ${result.numFound}`);
 
   if (result.numFound === 0) {
     console.log("No jobs to validate.");

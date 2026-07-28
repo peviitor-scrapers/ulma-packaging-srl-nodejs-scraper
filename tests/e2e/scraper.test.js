@@ -188,12 +188,12 @@ describe('E2E: Full Scraping Pipeline', () => {
     itIfAnaf('should find ULMA PACKAGING in ANAF and validate active status', async () => {
       const results = await anaf.searchCompany(TEST_BRAND);
 
-      const msg = results.find(c =>
+      const ulma = results.find(c =>
         c.name.toUpperCase().includes('ULMA PACKAGING') &&
         c.statusLabel === 'Funcțiune'
       );
-      expect(msg).toBeDefined();
-      expect(msg.cui.toString()).toBe(TEST_CIF);
+      expect(ulma).toBeDefined();
+      expect(ulma.cui.toString()).toBe(TEST_CIF);
 
       const anafData = await anaf.getCompanyFromANAF(TEST_CIF);
       expect(anafData).toBeDefined();
@@ -208,7 +208,7 @@ describe('E2E: Full Scraping Pipeline', () => {
       expect(result.cif).toBe(TEST_CIF);
 
       if (result.existingJobsCount === 0) {
-        console.log('⚠️ No MSG jobs in SOLR — skipping job count assertion');
+        console.log('⚠️ No ULMA jobs in SOLR — skipping job count assertion');
         return;
       }
       expect(result.existingJobsCount).toBeGreaterThan(0);
@@ -248,11 +248,11 @@ describe('E2E: Full Scraping Pipeline', () => {
       api = await import('../../scraper/api.js');
     });
 
-    itIfApi('should have MSG jobs via API with correct company name', async () => {
+    itIfApi('should have ULMA jobs via API with correct company name', async () => {
       const result = await api.querySOLR(TEST_CIF);
 
       if (result.numFound === 0) {
-        console.log('⚠️ No MSG jobs in SOLR — skipping API data verification');
+        console.log('⚠️ No ULMA jobs in SOLR — skipping API data verification');
         return;
       }
 
@@ -262,12 +262,12 @@ describe('E2E: Full Scraping Pipeline', () => {
       }
     }, 15000);
 
-    itIfApi('should have MSG company core entry with required fields', async () => {
-      const msg = await api.getCompanyByCif(TEST_CIF);
+    itIfApi('should have ULMA company core entry with required fields', async () => {
+      const ulma = await api.getCompanyByCif(TEST_CIF);
 
-      expect(msg).not.toBeNull();
-      expect(msg.company).toBe('ULMA PACKAGING S.R.L.');
-      expect(msg.status).toBe('activ');
+      expect(ulma).not.toBeNull();
+      expect(ulma.company).toBe('ULMA PACKAGING S.R.L.');
+      expect(ulma.status).toBe('activ');
     }, 15000);
   });
 });

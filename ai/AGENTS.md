@@ -40,15 +40,14 @@ NEVER use paths outside the project (e.g. `C:\Users\...\AppData\Local\Temp\openc
 - Push after commit
 
 ### 3. Environment Variables
-- `SOLR_AUTH` must be set in `.env.local` for SOLR tests (format: `user:password`)
-- `.env.local` is loaded automatically at runtime via `dotenv` (see `package.json`) — never commit it
-- Consistency tests also need `GITHUB_REPOSITORY` (format: `owner/repo`) and `GITHUB_TOKEN`
+- `.env.local` is NOT used — all operations go through the Peviitor API (no direct SOLR access)
+- Consistency tests need `GITHUB_REPOSITORY` (format: `owner/repo`) and `GITHUB_TOKEN`
 
 ### 4. Testing
 ```bash
 npm run test:unit
-npm run test:integration   # needs ANAF + SOLR_AUTH
-npm run test:e2e           # needs ANAF + SOLR_AUTH
+npm run test:integration   # needs ANAF
+npm run test:e2e           # needs ANAF
 npm run test:consistency   # needs GITHUB_REPOSITORY + GITHUB_TOKEN
 ```
 
@@ -60,6 +59,5 @@ npm run test:consistency   # needs GITHUB_REPOSITORY + GITHUB_TOKEN
 ### 6. DO NOT modify these files (derived from template)
 - `scraper/company-data.js`
 - `scraper/company.js`
-- `scraper/` (except for configuration in `scraper/config/`)
+- `scraper/job-validator.js`
 - `scraper/validate-jobs.js`
-- `.github/workflows/automation-testing.yml`
