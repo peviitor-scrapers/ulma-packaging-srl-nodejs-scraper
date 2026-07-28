@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { validateAndGetCompany } from "./company.js";
-import { querySOLR, upsertJobs, upsertCompany } from "./api.js";
+import { querySOLR, upsertJobs, upsertCompany, deleteJobByUrl } from "./api.js";
 import { generateJobsMarkdown } from "./markdown-generator.js";
 import companyConfig from "./config/company.js";
 
@@ -144,9 +144,10 @@ async function main() {
   try {
     fs.mkdirSync("scraper", { recursive: true });
 
-    console.log("=== Step 1: Get existing jobs count ===");
+    console.log("=== Step 1: Get existing jobs from SOLR ===");
     const existingResult = await querySOLR(COMPANY_ID);
     const existingCount = existingResult.numFound;
+    const existingUrls = new Set(existingResult.docs.map(doc => doc.url).filter(Boolean));
     console.log(`Found ${existingCount} existing jobs in SOLR`);
 
     console.log("=== Step 2: Validate company via ANAF ===");
@@ -218,12 +219,28 @@ async function main() {
     console.log("\n=== Step 4: Upsert jobs to SOLR ===");
     await upsertJobs(transformedPayload.jobs);
 
+    // Step 4.5: Delete stale jobs — URLs in SOLR but no longer on the website
+    const scrapedUrls = new Set(transformedPayload.jobs.map(job => job.url));
+    const staleUrls = [...existingUrls].filter(url => !scrapedUrls.has(url));
+
+    if (staleUrls.length > 0) {
+      console.log(`\n=== Step 4.5: Delete ${staleUrls.length} stale job(s) ===`);
+      for (const url of staleUrls) {
+        console.log(`  Deleting: ${url}`);
+        await deleteJobByUrl(url);
+      }
+      console.log(`✅ Deleted ${staleUrls.length} stale job(s)`);
+    } else {
+      console.log("\n✅ No stale jobs to delete");
+    }
+
     console.log("\n=== Step 5: Summary ===");
 
     const finalResult = await querySOLR(COMPANY_ID);
     console.log(`\n=== SUMMARY ===`);
     console.log(`Jobs existing in SOLR before scrape: ${existingCount}`);
     console.log(`Jobs scraped from ULMA PACKAGING website: ${scrapedCount}`);
+    console.log(`Stale jobs deleted: ${staleUrls.length}`);
     console.log(`Jobs in SOLR after scrape: ${finalResult.numFound}`);
     console.log(`====================`);
 
