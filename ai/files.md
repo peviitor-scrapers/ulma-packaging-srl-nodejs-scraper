@@ -1,29 +1,24 @@
 # Project Files
 
-## JavaScript Files — Root
+## JavaScript Files — scraper/
 
 | File | Description |
 |------|-------------|
-| `index.js` | Main scraper - full workflow: validate company → scrape → transform → upsert → generate docs/jobs.md |
-| `company.js` | Validates company via ANAF + Peviitor APIs, checks if company is active/inactive |
-| `solr.js` | SOLR operations module - exports querySOLR, deleteJobByUrl, upsertJobs + standalone verify/extract/company commands |
-| `demoanaf.js` | CLI entry point for ANAF module (thin wrapper around src/anaf.js) |
-| `validate-jobs.js` | **Generic deep validator (manual use).** Full GET requests, parses page body for "no longer available" keywords. Works with any CIF, single URL, or file. Slower but catches soft-404s. Not used by CI. |
+| `scraper/index.js` | Main scraper - full workflow: validate company → scrape → transform → upsert → generate docs/jobs.md |
+| `scraper/company.js` | Validates company via ANAF + CUIScan + Peviitor APIs, checks if company is active/inactive |
+| `scraper/company-data.js` | Multi-source company data module - ANAF + CUIScan (company details) + CUIFirma (search). Exports `getCompanyFromANAF`, `getCompanyFromANAFWithFallback`, `searchCompany` |
+| `scraper/company-data-cli.js` | CLI entry point for company-data.js (thin wrapper) |
+| `scraper/api.js` | Peviitor API operations module - exports querySOLR, deleteJobByUrl, upsertJobs + standalone verify/extract/company commands |
+| `scraper/validate-jobs.js` | **Generic deep validator (manual use).** Full GET requests, parses page body for "no longer available" keywords. Works with any CIF, single URL, or file. Slower but catches soft-404s. Not used by CI. |
+| `scraper/job-validator.js` | Shared validation primitives - exports validateByHead(url), validateByContent(url, opts), DEFAULT_EXPIRED_KEYWORDS. Used by both `validate-jobs.js` and `tests/validate-ulmapackaging-jobs.js`. |
+| `scraper/markdown-generator.js` | Generates docs/jobs.md - exports generateJobsMarkdown(companyData, jobs) |
 
-## JavaScript Files — src/
-
-| File | Description |
-|------|-------------|
-| `src/anaf.js` | ANAF API core module - exports getCompanyFromANAF(cif), getCompanyFromANAFWithFallback(cif, cached), searchCompany(brandName) |
-| `src/markdown-generator.js` | Generates docs/jobs.md - exports generateJobsMarkdown(companyData, jobs) |
-| `src/job-validator.js` | Shared validation primitives - exports validateByHead(url), validateByContent(url, opts), DEFAULT_EXPIRED_KEYWORDS. Used by both `validate-jobs.js` and `tests/validate-epam-jobs.js`. |
-
-## Config — config/
+## Config — scraper/config/
 
 | File | Description |
 |------|-------------|
-| `config/company.json` | **Single source of truth for company identity.** All scraper code, CI workflows, and the static HTML read from this file. To derive a scraper for a different company, this is the primary file to edit. |
-| `config/company.js` | ESM wrapper that imports and exposes `config/company.json` to Node code |
+| `scraper/config/company.json` | **Single source of truth for company identity.** All scraper code, CI workflows, and the static HTML read from this file. To derive a scraper for a different company, this is the primary file to edit. |
+| `scraper/config/company.js` | ESM wrapper that imports and exposes `scraper/config/company.json` to Node code |
 
 ## Test Files — tests/
 
@@ -34,8 +29,10 @@
 | `tests/validate-ulmapackaging-jobs.js` | **ULMA-specific fast validator (used by CI).** HEAD requests only, hardcoded ULMA CIF. Called nightly by `automation-testing.yml`. Supports `--dry-run` and `--delete`. |
 | `tests/unit/index.test.js` | Unit tests for index.js - parseApiJobs, mapToJobModel, transformJobsForSOLR |
 | `tests/unit/company.test.js` | Unit tests for company.js - getCompanyBrand, validateAndGetCompany, fallback caching |
-| `tests/unit/solr.test.js` | Unit tests for solr.js - query, upsert, delete, HTTP error handling |
-| `tests/unit/demoanaf.test.js` | Unit tests for ANAF search and company retrieval with mocked responses |
+| `tests/unit/api.test.js` | Unit tests for api.js - query, upsert, delete, HTTP error handling |
+| `tests/unit/company-data.test.js` | Unit tests for company-data.js - search, company retrieval, CUIScan/CUIFirma fallback |
+| `tests/unit/job-validator.test.js` | Unit tests for job-validator.js - validateByHead, validateByContent |
+| `tests/unit/markdown-generator.test.js` | Unit tests for markdown-generator.js |
 | `tests/integration/workflow.test.js` | Integration tests - ANAF live API, Peviitor API, SOLR company/job cores |
 | `tests/e2e/scraper.test.js` | E2E tests - full pipeline with real ULMA career page, ANAF, and SOLR |
 | `tests/consistency/public.test.js` | Verifies repository is public on GitHub |
@@ -81,13 +78,12 @@
 
 | File | Description |
 |------|-------------|
-| `company.json` | **ANAF cache (committed).** Survives between CI runs so the scraper does not hit demoANAF on every scrape. Refreshed when older than 7 days (configurable via `CACHE_MAX_AGE_DAYS` in company.js). |
-| `docs/company.json` | Static copy of `config/company.json` regenerated on each scrape. Served by GitHub Pages so the live page can read company identity without hardcoding it in HTML. |
-| `delete_request.json` | **Manual maintenance tool** — SOLR payload to delete ALL jobs for CIF 47978792. Use only when you need to wipe ULMA jobs from SOLR entirely. Run with: `curl --user "${SOLR_AUTH}" "https://solr.peviitor.ro/solr/job/update?commit=true" -H "Content-Type: application/json" -d @delete_request.json` |
+| `scraper/anaf-cache.json` | **ANAF cache (committed).** Survives between CI runs so the scraper does not hit demoANAF on every scrape. Refreshed when older than 7 days (configurable via `CACHE_MAX_AGE_DAYS` in company.js). |
+| `docs/company.json` | Static copy of `scraper/config/company.json` regenerated on each scrape. Served by GitHub Pages so the live page can read company identity without hardcoding it in HTML. |
 | `docs/jobs.md` | Scraped jobs in markdown format - company info + all current jobs (generated by CI after each scrape) |
 
 ## Notes
 
 - All `.md` schema files (job-model.md, company-model.md) are dynamic — check peviitor_core README.md for updates
 - `tmp/` directory holds runtime artifacts (jobs.json, jobs_existing.json) — not committed
-- Full workflow: validate company (ANAF+Peviitor) → scrape ULMA → transform → upsert SOLR → generate docs/jobs.md
+- Full workflow: validate company (ANAF+CUIScan+CUIFirma+Peviitor) → scrape ULMA → transform → upsert SOLR → generate docs/jobs.md

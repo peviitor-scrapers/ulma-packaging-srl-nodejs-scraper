@@ -9,8 +9,8 @@
  * SCOPE: Generic — works with ANY CIF, single URL, or list from file.
  * Used for ad-hoc cleanup and debugging. NOT called from CI.
  *
- * For the fast CI-friendly ULMA-only HEAD check, see
- * tests/validate-ulmapackaging-jobs.js.
+ * For the fast CI-friendly MSG-only HEAD check, see
+ * tests/validate-ulma-jobs.js.
  *
  * Usage:
  *   node validate-jobs.js <CIF>                   - Query Solr and validate all jobs for a CIF
@@ -20,7 +20,8 @@
  */
 
 import fs from "fs";
-import { validateByContent } from "./src/job-validator.js";
+import { querySOLR } from "./api.js";
+import { validateByContent } from "./job-validator.js";
 
 async function checkUrls(urls) {
   console.log(`=== Validating ${urls.length} URLs ===\n`);
@@ -61,7 +62,6 @@ async function checkUrls(urls) {
 async function validateJobs(cif) {
   console.log("=== Validate Job URLs from Solr ===\n");
   
-  const { querySOLR } = await import("./solr.js");
   const result = await querySOLR(cif);
   const urls = result.docs.map(doc => doc.url);
   
@@ -90,7 +90,7 @@ async function loadUrlsFromFile(filePath) {
 }
 
 async function deleteExpiredJobs(expiredJobs) {
-  const { deleteJobByUrl } = await import("./solr.js");
+  const { deleteJobByUrl } = await import("./api.js");
   
   console.log(`\nDeleting ${expiredJobs.length} expired jobs from SOLR...`);
   
@@ -135,8 +135,8 @@ Usage:
   node validate-jobs.js --file <file.json>       - Check URLs from JSON file
 
 Examples:
-  node validate-jobs.js 47978792                 - Validate ULMA jobs
-  node validate-jobs.js --url "https://ulmapackaging.talentclue.com/en/node/123_test"
+  node validate-jobs.js 47978792                 - Validate MSG jobs
+  node validate-jobs.js --url "https://www.ulmapackaging.ro/en/careers/job-offerings/example"
   node validate-jobs.js --urls "url1" "url2" "url3"
   node validate-jobs.js --file jobs.json
 `;
@@ -182,8 +182,8 @@ async function main() {
           expiredJobs: results.expired.map(j => ({ url: j.url, title: j.title })),
           errorJobs: results.error.map(j => ({ url: j.url, error: j.error }))
         };
-        fs.writeFileSync("tmp/expired-jobs.json", JSON.stringify(output, null, 2));
-        console.log("Saved tmp/expired-jobs.json");
+        fs.writeFileSync("scraper/expired-jobs.json", JSON.stringify(output, null, 2));
+        console.log("Saved scraper/expired-jobs.json");
       }
     }
     return;

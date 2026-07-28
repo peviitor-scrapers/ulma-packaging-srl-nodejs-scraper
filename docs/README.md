@@ -14,7 +14,7 @@ job_seeker_ro_spider
 
 ## Ce face
 
-1. **Validează compania** — interoghează API-ul public ANAF ([demoanaf.ro](https://demoanaf.ro)) după CIF-ul ULMA PACKAGING (47978792) și verifică:
+1. **Validează compania** — interoghează API-urile publice ANAF/CUIScan/CUIFirma ([demoanaf.ro](https://demoanaf.ro), [cuiscan.ro](https://cuiscan.ro), [cuifirma.ro](https://cuifirma.ro)) după CIF-ul ULMA PACKAGING (47978792) și verifică:
    - Denumirea oficială: ULMA PACKAGING S.R.L.
    - Status: activ/inactiv/radiat
    - Adresa completă din registrul comerțului
@@ -27,15 +27,18 @@ job_seeker_ro_spider
 ## Structură proiect
 
 ```
-├── config/company.json         # Sursa unică de adevăr (CIF, brand, URL-uri)
-├── config/company.js           # Loader ESM pentru config/company.json
-├── index.js                    # Orchestrator principal
-├── company.js                  # Validare companie (ANAF + Peviitor + SOLR) cu cache 7 zile
-├── solr.js                     # Operații SOLR (query, upsert, delete, company)
-├── src/
-│   ├── anaf.js                 # Modul ANAF API (search + company details)
-│   ├── markdown-generator.js   # Generează docs/jobs.md după scrape
-│   └── job-validator.js        # Primitivă comună: validateByHead, validateByContent
+├── scraper/
+│   ├── config/
+│   │   ├── company.json     # Sursa unică de adevăr (CIF, brand, URL-uri)
+│   │   └── company.js       # Loader ESM pentru config/company.json
+│   ├── index.js             # Orchestrator principal
+│   ├── company.js           # Validare companie (ANAF + Peviitor + SOLR) cu cache 7 zile
+│   ├── api.js               # Operații Peviitor API (query, upsert, delete, company)
+│   ├── company-data.js      # Modul multi-sursă: ANAF + CUIScan + CUIFirma (search + company details)
+│   ├── company-data-cli.js  # CLI entry point pentru company-data.js
+│   ├── markdown-generator.js# Generează docs/jobs.md după scrape
+│   ├── job-validator.js     # Primitivă comună: validateByHead, validateByContent
+│   └── validate-jobs.js     # Validator deep (manual use)
 ├── tests/
 │   ├── unit/          # Teste unitare
 │   ├── integration/   # Teste de integrare (ANAF + SOLR live)
@@ -51,6 +54,8 @@ job_seeker_ro_spider
 |---|---|---|
 | ULMA Packaging | `https://www.ulmapackaging.ro/lucreaza-cu-noi/` | Public |
 | ANAF (demoanaf) | `https://demoanaf.ro/api/...` | Public |
+| CUIScan | `https://cuiscan.ro/api.php` | Public |
+| CUIFirma | `https://cuifirma.ro/api/search` | Public |
 | ANOFM | `https://mediere.anofm.ro/api/entity/vw_public_job_posting` | Public |
 | SOLR (job core) | `https://solr.peviitor.ro/solr/job` | `SOLR_AUTH` |
 | SOLR (company core) | `https://solr.peviitor.ro/solr/company` | `SOLR_AUTH` |

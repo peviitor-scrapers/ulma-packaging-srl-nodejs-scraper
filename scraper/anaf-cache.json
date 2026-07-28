@@ -1,0 +1,15 @@
+{
+  "validatedAt": "2026-07-28T05:40:40.648Z",
+  "anaf": null,
+  "peviitor": {
+    "id": "18346431",
+    "company": "ULMA PACKAGING PRODUCTION S.R.L.",
+    "brand": "ULMA PACKAGING PRODUCTION S.R.L.",
+    "status": "activ",
+    "location": [
+      "Sat Apahida, Comuna Apahida"
+    ],
+    "lastScraped": "2026-07-22",
+    "scraperFile": "inviitor-ro-nodejs-scraper"
+  }
+}

@@ -4,11 +4,11 @@
 ULMA PACKAGING S.R.L. scraper for peviitor.ro (Node.js, ESM, Jest)
 
 ## 🌱 This Repo Is a Derived Scraper
-This repo is a **derived scraper** for ULMA PACKAGING S.R.L., generated from the EPAM template. The source of truth for company identity is `config/company.json`.
+This repo is a **derived scraper** for ULMA PACKAGING S.R.L., generated from the EPAM template. The source of truth for company identity is `scraper/config/company.json`.
 
 When making changes:
-- **All company-specific identity lives in `config/company.json`** (CIF, brand, legalName, URLs, API params). Read from `config/company.js` in Node code, or via `jq` in workflows. Never hardcode in source files.
-- **Only the scraping logic in `index.js`** is company-specific. The output shape (`mapToJobModel`, `transformJobsForSOLR`) must stay uniform across scrapers.
+- **All company-specific identity lives in `scraper/config/company.json`** (CIF, brand, legalName, URLs, API params). Read from `scraper/config/company.js` in Node code, or via `jq` in workflows. Never hardcode in source files.
+- **Only the scraping logic in `scraper/index.js`** is company-specific. The output shape (`mapToJobModel`, `transformJobsForSOLR`) must stay uniform across scrapers.
 
 ## Critical Rules
 
@@ -58,8 +58,8 @@ npm run test:consistency   # needs GITHUB_REPOSITORY + GITHUB_TOKEN
 - Never `--force` push
 
 ### 6. DO NOT modify these files (derived from template)
-- `solr.js`
-- `company.js`
-- `src/` (except for configuration)
-- `validate-jobs.js`
+- `scraper/company-data.js`
+- `scraper/company.js`
+- `scraper/` (except for configuration in `scraper/config/`)
+- `scraper/validate-jobs.js`
 - `.github/workflows/automation-testing.yml`
