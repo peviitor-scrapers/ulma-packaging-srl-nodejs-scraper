@@ -10,11 +10,11 @@
 | Location | Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-07-30 |
+| Last Scraped | 2026-07-31 |
 
-## Current Job Listings (7)
+## Current Job Listings (6)
 
-_Generated: 2026-07-30T08:13:15.380Z_
+_Generated: 2026-07-31T08:39:59.862Z_
 
 ### Programator CNC
 
@@ -28,14 +28,6 @@ _Generated: 2026-07-30T08:13:15.380Z_
 
 - **URL:** [https://ulmapackaging.talentclue.com/en/node/126709859/4590](https://ulmapackaging.talentclue.com/en/node/126709859/4590)
 - **Work Mode:** on-site
-- **Location:** Apahida
-- **Tags:** production, full time
-- **Status:** scraped
-
-### Specialist Achiziții
-
-- **URL:** [https://ulmapackaging.talentclue.com/en/node/126544787/4590](https://ulmapackaging.talentclue.com/en/node/126544787/4590)
-- **Work Mode:** hybrid
 - **Location:** Apahida
 - **Tags:** production, full time
 - **Status:** scraped
