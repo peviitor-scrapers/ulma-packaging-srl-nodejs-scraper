@@ -26,7 +26,7 @@ const COMPANY_BRAND = companyConfig.brand || null;
 const CACHE_MAX_AGE_DAYS = 7;
 
 // ANAF raw data cache (per-run, for offline fallback)
-const ANAF_CACHE_PATH = "scraper/anaf-cache.json";
+const TMP_CACHE_PATH = "tmp/company.json";
 
 // ============================================================================
 // COMPANY MODEL - Defines the expected schema for company data
@@ -152,38 +152,47 @@ function saveCompanyData(anafData, peviitorData) {
   // Save ANAF raw data for offline fallback
   const anafCache = {
     validatedAt: new Date().toISOString(),
+    source: "ANAF",
+    brand: COMPANY_BRAND,
     anaf: anafData,
-    peviitor: peviitorData
+    peviitor: peviitorData,
+    summary: {
+      company: anafData?.name || null,
+      cif: anafData?.cui?.toString() || null,
+      active: !anafData?.inactive,
+      inactiveSince: anafData?.inactiveSince || null,
+      address: anafData?.address || null
+    }
   };
-  fs.mkdirSync("scraper", { recursive: true });
-  fs.writeFileSync(ANAF_CACHE_PATH, JSON.stringify(anafCache, null, 2), "utf-8");
-  console.log(`✅ Saved ANAF cache to ${ANAF_CACHE_PATH}`);
-
-  // Update lastScraped in config/company.json (single source of truth)
-  const configPath = "scraper/config/company.json";
-  const config = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-  config.lastScraped = new Date().toISOString().split("T")[0];
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf-8");
-  console.log(`✅ Updated lastScraped in ${configPath}`);
+  fs.mkdirSync("tmp", { recursive: true });
+  fs.writeFileSync(TMP_CACHE_PATH, JSON.stringify(anafCache, null, 2), "utf-8");
+  console.log(`✅ Saved company data to ${TMP_CACHE_PATH}`);
+  return anafCache;
 }
 
 /**
  * Loads ANAF raw cache for offline fallback.
  */
 function loadAnafCache() {
-  if (!fs.existsSync(ANAF_CACHE_PATH)) return null;
+  if (!fs.existsSync(TMP_CACHE_PATH)) return null;
   try {
-    return JSON.parse(fs.readFileSync(ANAF_CACHE_PATH, "utf-8"));
+    return JSON.parse(fs.readFileSync(TMP_CACHE_PATH, "utf-8"));
   } catch (e) {
-    console.log(`Warning: Could not parse ${ANAF_CACHE_PATH}`);
+    console.log(`Warning: Could not parse ${TMP_CACHE_PATH}`);
     return null;
   }
 }
 
 /**
- * Checks whether the config lastScraped is still fresh (within CACHE_MAX_AGE_DAYS).
+ * Checks whether the cache validatedAt is still fresh (within CACHE_MAX_AGE_DAYS).
  */
 function isCacheFresh() {
+  const cache = loadAnafCache();
+  if (cache?.validatedAt) {
+    const ageMs = Date.now() - new Date(cache.validatedAt).getTime();
+    const ageDays = ageMs / (1000 * 60 * 60 * 24);
+    return ageDays < CACHE_MAX_AGE_DAYS;
+  }
   if (!companyConfig.lastScraped) return false;
   const ageMs = Date.now() - new Date(companyConfig.lastScraped).getTime();
   const ageDays = ageMs / (1000 * 60 * 60 * 24);
@@ -291,7 +300,7 @@ export async function validateAndGetCompany() {
   }
   
   // Save company data to cache
-  saveCompanyData(anafData, peviitorData);
+  if (anafData) saveCompanyData(anafData, peviitorData);
   
   // If company is inactive, remove their jobs from SOLR
   if (!active) {

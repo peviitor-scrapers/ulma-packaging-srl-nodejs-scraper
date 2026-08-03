@@ -5,10 +5,11 @@ import { validateAndGetCompany } from "./company.js";
 import { querySOLR, upsertJobs, upsertCompany, deleteJobByUrl } from "./api.js";
 import { generateJobsMarkdown } from "./markdown-generator.js";
 import companyConfig from "./config/company.js";
+import scraperConfig from "./config/scraper.js";
 
 const COMPANY_ID = companyConfig.id;
 
-const DATA_URL = `${companyConfig.career[0]}static/dataro.json`;
+const DATA_URL = scraperConfig.dataUrl;
 
 let COMPANY_NAME = null;
 
