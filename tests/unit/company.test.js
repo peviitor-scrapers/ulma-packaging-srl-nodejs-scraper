@@ -66,7 +66,7 @@ const COMPANY_CONFIG_TEMPLATE = {
   location: ["Pantelimon"],
   website: ["https://www.ulmapackaging.ro"],
   career: ["https://www.ulmapackaging.ro/lucreaza-cu-noi/"],
-  scraperFile: "https://github.com/sebiboga/ulma-packaging-srl-nodejs-scraper/actions/workflows/job-seeker-ro-spider.yml"
+  scraperFile: "https://github.com/peviitor-scrapers/ulma-packaging-srl-nodejs-scraper/actions/workflows/job-seeker-ro-spider.yml"
 };
 
 function writeCompanyConfig(lastScraped) {
