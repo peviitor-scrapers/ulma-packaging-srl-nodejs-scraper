@@ -7,14 +7,14 @@
 | CIF | 47978792 |
 | Brand | ULMAPACKAGING |
 | Status | active |
-| Location | Orş. Pantelimon |
+| Location | Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-08-10 |
+| Last Scraped | 2026-08-11 |
 
 ## Current Job Listings (6)
 
-_Generated: 2026-08-10T07:18:39.713Z_
+_Generated: 2026-08-11T06:55:43.710Z_
 
 ### Programator CNC
 
