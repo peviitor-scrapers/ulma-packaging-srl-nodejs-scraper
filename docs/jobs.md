@@ -7,14 +7,14 @@
 | CIF | 47978792 |
 | Brand | ULMAPACKAGING |
 | Status | active |
-| Location | Pantelimon |
+| Location | Orş. Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-08-25 |
+| Last Scraped | 2026-08-26 |
 
-## Current Job Listings (6)
+## Current Job Listings (5)
 
-_Generated: 2026-08-25T06:34:59.097Z_
+_Generated: 2026-08-26T06:36:54.967Z_
 
 ### Programator CNC
 
@@ -27,14 +27,6 @@ _Generated: 2026-08-25T06:34:59.097Z_
 ### Responsabil Calitate, SSM și Mediu (HSEQ Manager)
 
 - **URL:** [https://ulmapackaging.talentclue.com/en/node/126709859/4590](https://ulmapackaging.talentclue.com/en/node/126709859/4590)
-- **Work Mode:** on-site
-- **Location:** Apahida
-- **Tags:** production, full time
-- **Status:** scraped
-
-### Lacatus mecanic
-
-- **URL:** [https://ulmapackaging.talentclue.com/en/node/123026605/4590](https://ulmapackaging.talentclue.com/en/node/123026605/4590)
 - **Work Mode:** on-site
 - **Location:** Apahida
 - **Tags:** production, full time
