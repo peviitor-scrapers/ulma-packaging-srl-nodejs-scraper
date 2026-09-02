@@ -10,11 +10,11 @@
 | Location | Orş. Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-09-01 |
+| Last Scraped | 2026-09-02 |
 
 ## Current Job Listings (5)
 
-_Generated: 2026-09-01T10:55:57.278Z_
+_Generated: 2026-09-02T10:23:10.625Z_
 
 ### Programator CNC
 
