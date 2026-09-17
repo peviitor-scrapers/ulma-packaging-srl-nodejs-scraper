@@ -10,11 +10,11 @@
 | Location | Orş. Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-09-15 |
+| Last Scraped | 2026-09-17 |
 
 ## Current Job Listings (6)
 
-_Generated: 2026-09-15T10:50:12.943Z_
+_Generated: 2026-09-17T10:48:01.809Z_
 
 ### Operator Abkant
 
