@@ -10,19 +10,11 @@
 | Location | Orş. Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-09-21 |
+| Last Scraped | 2026-09-22 |
 
-## Current Job Listings (6)
+## Current Job Listings (5)
 
-_Generated: 2026-09-21T11:42:21.165Z_
-
-### Operator Abkant
-
-- **URL:** [https://ulmapackaging.talentclue.com/en/node/128401119/4590](https://ulmapackaging.talentclue.com/en/node/128401119/4590)
-- **Work Mode:** on-site
-- **Location:** Apahida
-- **Tags:** production, full time
-- **Status:** scraped
+_Generated: 2026-09-22T10:45:52.513Z_
 
 ### Programator CNC
 
