@@ -10,11 +10,11 @@
 | Location | Orş. Pantelimon |
 | Website | [https://www.ulmapackaging.ro](https://www.ulmapackaging.ro) |
 | Careers | [https://www.ulmapackaging.ro/lucreaza-cu-noi/](https://www.ulmapackaging.ro/lucreaza-cu-noi/) |
-| Last Scraped | 2026-11-03 |
+| Last Scraped | 2026-11-04 |
 
 ## Current Job Listings (3)
 
-_Generated: 2026-11-03T13:26:41.661Z_
+_Generated: 2026-11-04T13:37:53.994Z_
 
 ### Responsabil Calitate, SSM și Mediu (HSEQ Manager)
 
